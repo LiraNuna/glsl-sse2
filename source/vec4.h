@@ -8,12 +8,12 @@ typedef union vec4
 {	
 		// FIXME until c++0x comes out for mat4 unrestricted unions
 	friend union mat4;
-
+		
 	private:
 			// SSE register
 		__m128 m;
 
-			// SSE compatible constructor (Advanced)
+			// SSE compatible constructor
 		inline vec4(const __m128 &_m) {
 			m = _m;
 		}
@@ -43,6 +43,7 @@ typedef union vec4
 				return *this;
 			}
 
+				// Swizzle of the swizzle
 			template<unsigned other_mask>
 			inline const _swzl<other_mask> shuffle_ro() const {
 				m = _mm_shuffle_ps(m, m, mask);
@@ -50,6 +51,7 @@ typedef union vec4
 				return _swzl<other_mask>(m);
 			}
 
+				// Swizzle of the swizzle
 			template<unsigned other_mask>
 			inline const _swzl<other_mask> shuffle_rw() const {
 				m = _mm_shuffle_ps(m, m, mask);
@@ -59,6 +61,8 @@ typedef union vec4
 
 			__m128 &m;
 		};
+
+		// ----------------------------------------------------------------- //
 
 	public:
 			// Empty constructor
@@ -103,7 +107,7 @@ typedef union vec4
 			// Read-write (actual read only) swizzle, const
 		template<unsigned mask>
 		inline const _swzl<mask> shuffle_rw() const {
-			return _swzl<mask>(m);
+			return _swzl<mask>(const_cast<__m128 &>(m));
 		}
 
 			// Read-only swizzle
@@ -115,7 +119,7 @@ typedef union vec4
 			// Read-only swizzle, const
 		template<unsigned mask>
 		inline const _swzl<mask> shuffle_ro() const {
-			return _swzl<mask>(m);
+			return _swzl<mask>(const_cast<__m128 &>(m));
 		}
 
 		// ----------------------------------------------------------------- //
