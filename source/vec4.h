@@ -4,6 +4,8 @@
 #include <math.h>
 #include <xmmintrin.h>
 
+#include <stdio.h>
+
 typedef union vec4
 {	
 		// FIXME until c++0x comes out for mat4 unrestricted unions
@@ -31,7 +33,14 @@ typedef union vec4
 
 			inline _swzl& operator = (const vec4 &v) {
 				m = _mm_shuffle_ps(v.m, v.m, mask);
-				
+				return *this;
+			}
+
+				// HACK: GCC doesn't like v.xyzw = v.xyzw and the like.
+				// This fixes it (at least for GCC 4.3.x)
+				// I guess GCC doesn't see the above operator acceptable to ADL
+			inline _swzl& operator = (const _swzl &s) {
+				s.m = m;
 				return *this;
 			}
 
@@ -39,7 +48,6 @@ typedef union vec4
 			inline _swzl& operator = (const _swzl<other_mask> &p) {
 				__m128 _m = p._swizzled();
 				m = _mm_shuffle_ps(_m, _m, mask);
-
 				return *this;
 			}
 
@@ -146,8 +154,10 @@ typedef union vec4
 
 		// ----------------------------------------------------------------- //
 
-		friend inline vec4& operator += (vec4 &v, float f);
-
+		inline vec4 operator += (float f) {
+			return (m = _mm_add_ps(m, _mm_set1_ps(f)));
+		}
+		
 		inline vec4 operator += (const vec4 &v) {
 			return (m = _mm_add_ps(m, v.m));
 		}
@@ -407,11 +417,6 @@ typedef union vec4
 			float s, t, p, q;
 		};
 } vec4;
-
-inline vec4& operator += (vec4& v, float f) {
-	v.m = _mm_add_ps(v.m, _mm_set1_ps(f));
-	return v;
-}
 
 inline const vec4 operator + (const vec4 &v, float f) {
 	return _mm_add_ps(v.m, _mm_set1_ps(f));
