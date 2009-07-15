@@ -21,14 +21,19 @@ void vec4::testSwizzleEquality()
 	assert(v.wzyx == ::vec4(4, 3, 2, 1));
 	assert(::vec4(4, 3, 2, 1) == v.wzyx);
 
-	assert(v.wzyx.wzyx == v);
+	assert(v.xyzw == v);
+	assert(v.yyyy == v.yyyy);
+	assert(v.wzzw == v.wzzw);
+
 	assert(v.xyzw.xyzw == v);
+	assert(v.wzyx.wzyx == v);
 
 	assert(v.yzwx.yzwx == v.zwxy);
 	assert(v.xwzy.xwzy == v.xyzw);
 
 	assert(v.xxxx.yyyy == ::vec4(1));
 	assert(v.yyyy.xxxx == ::vec4(2));
+	assert(v.wwww.xyzw == ::vec4(4));
 
 	assert(v.zzzz.xyzw == ::vec4(3));
 	assert(v.wwww.yyzz == ::vec4(4));
@@ -37,12 +42,13 @@ void vec4::testSwizzleEquality()
 void vec4::testSwizzleAccessors()
 {
 	::vec4 v(1, 2, 3, 4);
-
+/*
 	assert(v.xyzw.x == v.x);
 	assert(v.xyzw.y == v.y);
 
 	assert(v.wzyx.x == v.w);
 	assert(v.wzyx.y == v.z);
+*/
 }
 
 void vec4::testSwizzleWrite()
@@ -52,7 +58,7 @@ void vec4::testSwizzleWrite()
 
 	::vec4 out1(1, 2, 3, 4);
 	::vec4 out2(4, 3, 2, 1);
-	::vec4 out3(4, 1, 2, 3);
+	::vec4 out3(2, 3, 4, 1);
 
 	v.xyzw = in;
 	assert(v == out1);
