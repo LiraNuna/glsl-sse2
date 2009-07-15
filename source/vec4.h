@@ -4,8 +4,6 @@
 #include <math.h>
 #include <xmmintrin.h>
 
-#include <stdio.h>
-
 typedef union vec4
 {	
 		// FIXME until c++0x comes out for mat4 unrestricted unions
@@ -24,26 +22,31 @@ typedef union vec4
 		template <unsigned mask>
 		struct _swzl
 		{			
-			inline _swzl(__m128 &m):m(m) {
+			inline _swzl(__m128 &m):m(m) { 
+				// Empty
 			}
 
+			inline operator const vec4 () {
+				return _swizzled();
+			}
+
+				// Retrieve swizzled self proxy
 			inline __m128 _swizzled() const {
 				return _mm_shuffle_ps(m, m, mask);
 			}
 
+				// Swizzle from vec4
 			inline _swzl& operator = (const vec4 &v) {
 				m = _mm_shuffle_ps(v.m, v.m, mask);
-				return *this;
 			}
-
-				// HACK: GCC doesn't like v.xyzw = v.xyzw and the like.
-				// This fixes it (at least for GCC 4.3.x)
-				// I guess GCC doesn't see the above operator acceptable to ADL
+			
+				// Swizzle from same mask (v1.xyzw = v2.xyzw)
 			inline _swzl& operator = (const _swzl &s) {
-				s.m = m;
+				m = _mm_shuffle_ps(s.m, s.m, mask);
 				return *this;
 			}
 
+				// Swizzle mask => other_mask (v1.zwxy = v2.xyxy)
 			template<unsigned other_mask>
 			inline _swzl& operator = (const _swzl<other_mask> &p) {
 				__m128 _m = p._swizzled();
@@ -51,22 +54,28 @@ typedef union vec4
 				return *this;
 			}
 
-				// Swizzle of the swizzle
+				// Swizzle of the swizzle, read only (v.xxxx.yyyy)
 			template<unsigned other_mask>
 			inline const _swzl<other_mask> shuffle_ro() const {
 				m = _mm_shuffle_ps(m, m, mask);
-
 				return _swzl<other_mask>(m);
 			}
 
-				// Swizzle of the swizzle
+				// Swizzle of the swizzle, read/write (v1.zyxw = ...)
+			template<unsigned other_mask>
+			inline _swzl<other_mask> shuffle_rw() {
+				m = _mm_shuffle_ps(m, m, mask);
+				return _swzl<other_mask>(m);
+			}
+
+				// Swizzle of the swizzle, read/write const correct
 			template<unsigned other_mask>
 			inline const _swzl<other_mask> shuffle_rw() const {
 				m = _mm_shuffle_ps(m, m, mask);
-
 				return _swzl<other_mask>(m);
 			}
 
+				// Refrence to unswizzled self
 			__m128 &m;
 		};
 
@@ -400,6 +409,16 @@ typedef union vec4
 			                  _mm_mul_ps(_mm_mul_ps(e, _mm_sub_ps(v0.m,
 			                  _mm_mul_ps(_mm_mul_ps(e, d), _mm_sqrt_ps(k)))),
 			                             v1.m));
+		}
+
+		// ----------------------------------------------------------------- //
+
+		friend inline bool operator == (const vec4 &v0, const vec4 &v1) {
+			return (_mm_movemask_ps(_mm_cmpeq_ps(v0.m, v1.m)) == 0xF);
+		}
+
+		friend inline bool operator != (const vec4 &v0, const vec4 &v1) {
+			return (_mm_movemask_ps(_mm_cmpneq_ps(v0.m, v1.m)) == 0xF);
 		}
 
 		// ----------------------------------------------------------------- //
