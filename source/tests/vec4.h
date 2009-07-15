@@ -14,6 +14,7 @@ class vec4 :
 		static void testInequality();
 
 		static void testSwizzleEquality();
+		static void testSwizzleAccessors();
 		static void testSwizzleRead();
 		static void testSwizzleWrite();
 		static void testSwizzleReadWrite();

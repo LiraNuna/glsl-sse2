@@ -29,6 +29,20 @@ void vec4::testSwizzleEquality()
 
 	assert(v.xxxx.yyyy == ::vec4(1));
 	assert(v.yyyy.xxxx == ::vec4(2));
+
+	assert(v.zzzz.xyzw == ::vec4(3));
+	assert(v.wwww.yyzz == ::vec4(4));
+}
+
+void vec4::testSwizzleAccessors()
+{
+	::vec4 v(1, 2, 3, 4);
+
+	assert(v.xyzw.x == v.x);
+	assert(v.xyzw.y == v.y);
+
+	assert(v.wzyx.x == v.w);
+	assert(v.wzyx.y == v.z);
 }
 
 void vec4::testAccessors()
