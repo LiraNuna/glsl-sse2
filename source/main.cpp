@@ -35,7 +35,15 @@ int main()
 	assert(v.xxxx == vec4(1, 1, 1, 1));
 	assert(v.xyzw == vec4(1, 2, 3, 4));
 	assert(v.xyzw == v.xyzw);
+		// Swizzling
+	assert(v.wzyx == vec4(4, 3, 2, 1));
+	assert(v.wzyx == vec4(4, 3, 2, 1));
+		// Multi swizzling
+	assert(v.wzyx.wzyx == v);
 	assert(v.xyzw.xyzw == v);
+	assert(v.yyyy.xxxx == vec4(2));
+	assert(v.yyyy.xxxx == vec4(2));
+
 
 	printf("All tests passed.\n");
 	

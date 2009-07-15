@@ -38,6 +38,7 @@ typedef union vec4
 				// Swizzle from vec4
 			inline _swzl& operator = (const vec4 &v) {
 				m = _mm_shuffle_ps(v.m, v.m, mask);
+				return *this;
 			}
 			
 				// Swizzle from same mask (v1.xyzw = v2.xyzw)
@@ -57,22 +58,22 @@ typedef union vec4
 				// Swizzle of the swizzle, read only (v.xxxx.yyyy)
 			template<unsigned other_mask>
 			inline const _swzl<other_mask> shuffle_ro() const {
-				m = _mm_shuffle_ps(m, m, mask);
-				return _swzl<other_mask>(m);
+				__m128 _m = _mm_shuffle_ps(m, m, mask);
+				return _swzl<other_mask>(_m);
 			}
 
 				// Swizzle of the swizzle, read/write (v1.zyxw = ...)
 			template<unsigned other_mask>
 			inline _swzl<other_mask> shuffle_rw() {
-				m = _mm_shuffle_ps(m, m, mask);
-				return _swzl<other_mask>(m);
+				__m128 _m = _mm_shuffle_ps(m, m, mask);
+				return _swzl<other_mask>(_m);
 			}
 
 				// Swizzle of the swizzle, read/write const correct
 			template<unsigned other_mask>
 			inline const _swzl<other_mask> shuffle_rw() const {
-				m = _mm_shuffle_ps(m, m, mask);
-				return _swzl<other_mask>(m);
+				__m128 _m = _mm_shuffle_ps(m, m, mask);
+				return _swzl<other_mask>(_m);
 			}
 
 				// Refrence to unswizzled self
