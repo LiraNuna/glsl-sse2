@@ -27,4 +27,60 @@ void vec4::testSwizzleEquality()
 	assert(v.yyyy.xxxx == ::vec4(2));
 }
 
+void vec4::testAccessors()
+{
+	::vec4 v(1, 2, 3, 4);
+
+	assert(v.x == 1);
+	assert(v.y == 2);
+	assert(v.z == 3);
+	assert(v.w == 4);
+
+	assert(v.r == 1);
+	assert(v.g == 2);
+	assert(v.b == 3);
+	assert(v.a == 4);
+
+	assert(v.s == 1);
+	assert(v.t == 2);
+	assert(v.p == 3);
+	assert(v.q == 4);
+
+	assert(v[0] == 1);
+	assert(v[1] == 2);
+	assert(v[2] == 3);
+	assert(v[3] == 4);
+
+	assert(&v.y == &v.x + 1);
+	assert(&v.z == &v.y + 1);
+	assert(&v.w == &v.z + 1);
+
+	assert(&v.g == &v.r + 1);
+	assert(&v.b == &v.g + 1);
+	assert(&v.a == &v.b + 1);
+
+	assert(&v.t == &v.s + 1);
+	assert(&v.p == &v.t + 1);
+	assert(&v.q == &v.p + 1);
+
+	assert(&v.x == &v.r);
+	assert(&v.y == &v.g);
+	assert(&v.z == &v.b);
+	assert(&v.w == &v.a);
+
+	assert(&v.x == &v.s);
+	assert(&v.y == &v.t);
+	assert(&v.z == &v.p);
+	assert(&v.w == &v.q);
+
+	float *f = v;
+
+	assert(f[0] == 1);
+	assert(f[1] == 2);
+	assert(f[2] == 3);
+	assert(f[3] == 4);
+
+	assert(sizeof(v) == 4 * sizeof(float));
+}
+
 }

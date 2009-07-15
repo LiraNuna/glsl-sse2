@@ -17,6 +17,8 @@ class vec4 :
 		static void testSwizzleRead();
 		static void testSwizzleWrite();
 		static void testSwizzleReadWrite();
+
+		static void testAccessors();
 };
 
 }

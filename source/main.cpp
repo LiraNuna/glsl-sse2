@@ -27,6 +27,7 @@ int main()
 {
 	tests::vec4::testEquality();
 	tests::vec4::testSwizzleEquality();
+	tests::vec4::testAccessors();
 
 	printf("All tests passed.\n");
 
