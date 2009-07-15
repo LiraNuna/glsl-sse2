@@ -23,6 +23,10 @@ void vec4::testSwizzleEquality()
 
 	assert(v.wzyx.wzyx == v);
 	assert(v.xyzw.xyzw == v);
+
+	assert(v.yzwx.yzwx == v.zwxy);
+	assert(v.xwzy.xwzy == v.xyzw);
+
 	assert(v.xxxx.yyyy == ::vec4(1));
 	assert(v.yyyy.xxxx == ::vec4(2));
 }

@@ -29,10 +29,11 @@ typedef union vec4
 			{
 				enum
 				{
-					ROW0 = (mask >> (8 - (2 * ((other_mask >> 0) & 3)) - 2) & 3) << 6,
-					ROW1 = (mask >> (8 - (2 * ((other_mask >> 2) & 3)) - 2) & 3) << 4,
-					ROW2 = (mask >> (8 - (2 * ((other_mask >> 4) & 3)) - 2) & 3) << 2,
-					ROW3 = (mask >> (8 - (2 * ((other_mask >> 6) & 3)) - 2) & 3) << 0,
+					ROW0 = ((mask >> (((other_mask >> (0 * 2)) & 3) << 1)) & 3) << (0 * 2),
+					ROW1 = ((mask >> (((other_mask >> (1 * 2)) & 3) << 1)) & 3) << (1 * 2),
+					ROW2 = ((mask >> (((other_mask >> (2 * 2)) & 3) << 1)) & 3) << (2 * 2),
+					ROW3 = ((mask >> (((other_mask >> (3 * 2)) & 3) << 1)) & 3) << (3 * 2),
+
 					MASK = ROW0 | ROW1 | ROW2 | ROW3,
 				};
 			};
