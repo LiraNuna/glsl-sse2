@@ -1,7 +1,6 @@
-#include "vec4.h"
+#include "tests/vec4.h"
 
 #include <stdio.h>
-#include <assert.h>
 
 /*
 __m128 color32_to_vec4(uint32_t c)
@@ -26,26 +25,10 @@ uint32_t vec4_to_color32(__m128 m)
 
 int main()
 {
-	vec4 v(1, 2, 3, 4);
-
-		// Sanity check
-	assert(v == v);
-	assert(v == vec4(1, 2, 3, 4));
-		// Swizzling sanity check
-	assert(v.xxxx == vec4(1, 1, 1, 1));
-	assert(v.xyzw == vec4(1, 2, 3, 4));
-	assert(v.xyzw == v.xyzw);
-		// Swizzling
-	assert(v.wzyx == vec4(4, 3, 2, 1));
-	assert(v.wzyx == vec4(4, 3, 2, 1));
-		// Multi swizzling
-	assert(v.wzyx.wzyx == v);
-	assert(v.xyzw.xyzw == v);
-	assert(v.yyyy.xxxx == vec4(2));
-	assert(v.yyyy.xxxx == vec4(2));
-
+	tests::vec4::testEquality();
+	tests::vec4::testSwizzleEquality();
 
 	printf("All tests passed.\n");
-	
+
 	return 0;
 }

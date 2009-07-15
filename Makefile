@@ -14,7 +14,7 @@
 TARGET		:=	$(shell basename $(CURDIR))
 EXT			:=	
 BUILD		:=	.build
-SOURCES		:=	source
+SOURCES		:=	source source/tests
 PACKAGES	:=	
 CROSS		:=	
 VERSION		:=	
