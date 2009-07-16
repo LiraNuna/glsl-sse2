@@ -54,20 +54,18 @@ void vec4::testSwizzleAccessors()
 void vec4::testSwizzleWrite()
 {
 	::vec4 v;
-	::vec4 in(1, 2, 3, 4);
+	
+	v.xyzw = ::vec4(1, 2, 3, 4);
+	assert(v == ::vec4(1, 2, 3, 4));
 
-	::vec4 out1(1, 2, 3, 4);
-	::vec4 out2(4, 3, 2, 1);
-	::vec4 out3(2, 3, 4, 1);
+	v.wzyx = ::vec4(1, 2, 3, 4);
+	assert(v == ::vec4(4, 3, 2, 1));
 
-	v.xyzw = in;
-	assert(v == out1);
+	v.yzwx = ::vec4(1, 2, 3, 4);
+	assert(v == ::vec4(4, 1, 2, 3));
 
-	v.wzyx = in;
-	assert(v == out2);
-
-	v.yzwx = in;
-	assert(v == out3);
+	v.yxzw = ::vec4(1, 2, 3, 4);
+	assert(v == ::vec4(4, 3, 1, 2));
 }
 
 void vec4::testAccessors()
