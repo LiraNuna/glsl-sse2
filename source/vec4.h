@@ -1,33 +1,24 @@
 #ifndef __VEC4_H__
 #define __VEC4_H__
 
-#include <stdio.h>
-#include <math.h>
 #include <xmmintrin.h>
 
-typedef union vec4
+class vec4
 {	
 		// FIXME until c++0x comes out for mat4 unrestricted unions
 	friend union mat4;
-		
-	private:
-			// SSE register
-		__m128 m;
 
-			// SSE compatible constructor
-		inline vec4(const __m128 &_m) {
-			m = _m;
-		}
+	private:
 
 		template <unsigned char target, unsigned mask>
 		struct _mask_merger
 		{
 			enum
 			{
-				ROW0 = ((target >> (((mask >> (0 * 2)) & 3) << 1)) & 3) << (0 * 2),
-				ROW1 = ((target >> (((mask >> (1 * 2)) & 3) << 1)) & 3) << (1 * 2),
-				ROW2 = ((target >> (((mask >> (2 * 2)) & 3) << 1)) & 3) << (2 * 2),
-				ROW3 = ((target >> (((mask >> (3 * 2)) & 3) << 1)) & 3) << (3 * 2),
+				ROW0 = ((target >> (((mask >> 0) & 3) << 1)) & 3) << 0,
+				ROW1 = ((target >> (((mask >> 2) & 3) << 1)) & 3) << 2,
+				ROW2 = ((target >> (((mask >> 4) & 3) << 1)) & 3) << 4,
+				ROW3 = ((target >> (((mask >> 6) & 3) << 1)) & 3) << 6,
 
 				MASK = ROW0 | ROW1 | ROW2 | ROW3,
 			};
@@ -57,11 +48,7 @@ typedef union vec4
 		template <unsigned mask>
 		struct _swzl
 		{
-			friend union vec4;
-
-			private:
-					// Refrence to unswizzled self
-				__m128 &m;
+			friend class vec4;
 
 			public:
 				inline _swzl(__m128 &m):m(m) { 
@@ -114,6 +101,10 @@ typedef union vec4
 					typedef _mask_merger<mask, other_mask> merged;
 					return _mm_shuffle_ps(m, m, merged::MASK);
 				}
+
+			private:
+					// Refrence to unswizzled self
+				__m128 &m;
 		};
 
 		// ----------------------------------------------------------------- //
@@ -142,6 +133,11 @@ typedef union vec4
 			// Copy constructor
 		inline vec4(const vec4 &v) {
 			m = v.m;
+		}
+		
+			// SSE compatible constructor
+		inline vec4(const __m128 &_m) {
+			m = _m;
 		}
 
 		// ----------------------------------------------------------------- //
@@ -234,29 +230,49 @@ typedef union vec4
 
 		// ----------------------------------------------------------------- //
 
-		friend inline const vec4 operator + (const vec4 &, float );
+		friend inline const vec4 operator + (const vec4 &v, float f) {
+			return _mm_add_ps(v.m, _mm_set1_ps(f));
+		}
 		
-		friend inline const vec4 operator + (const vec4 &, const vec4 &);
+		friend inline const vec4 operator + (const vec4 &v0, const vec4 &v1) {
+			return _mm_add_ps(v0.m, v1.m);
+		}
 
 		inline const vec4 operator - () {
 			return _mm_xor_ps(m, _mm_set1_ps(-0.f));
 		}
 
-		friend inline const vec4 operator - (const vec4 &);
-		
-		friend inline const vec4 operator - (const vec4 &, float );
+		friend inline const vec4 operator - (const vec4 &v) {
+			return _mm_sub_ps(_mm_setzero_ps(), v.m);
+		}
 
-		friend inline const vec4 operator - (const vec4 &, const vec4 &);
+		friend inline const vec4 operator - (const vec4 &v, float f) {
+			return _mm_sub_ps(v.m, _mm_set1_ps(f));
+		}
 
-		friend inline const vec4 operator * (const vec4 &, float);
+		friend inline const vec4 operator - (const vec4 &v0, const vec4 &v1) {
+			return _mm_sub_ps(v0.m, v1.m);
+		}
 
-		friend inline const vec4 operator * (const vec4 &, const vec4 &);
+		friend inline const vec4 operator * (const vec4 &v, float f) {
+			return _mm_mul_ps(v.m, _mm_set1_ps(f));
+		}
 
-		friend inline const vec4 operator / (float , const vec4 &);
+		friend inline const vec4 operator * (const vec4 &v0, const vec4 &v1) {
+			return _mm_mul_ps(v0.m, v1.m);
+		}
 
-		friend inline const vec4 operator / (const vec4 &, float);
+		friend inline const vec4 operator / (float f, const vec4 &v) {
+			return _mm_div_ps(_mm_set1_ps(f), v.m);
+		}
 
-		friend inline const vec4 operator / (const vec4 &, const vec4 &);
+		friend inline const vec4 operator / (const vec4 &v, float f) {
+			return _mm_div_ps(v.m, _mm_set1_ps(f));
+		}
+
+		friend inline const vec4 operator / (const vec4 &v0, const vec4 &v1) {
+			return _mm_div_ps(v0.m, v1.m);
+		}
 
 		// ----------------------------------------------------------------- //
 		
@@ -457,62 +473,27 @@ typedef union vec4
 		friend inline bool operator != (const vec4 &v0, const vec4 &v1) {
 			return (_mm_movemask_ps(_mm_cmpneq_ps(v0.m, v1.m)) == 0xF);
 		}
-
+		
 		// ----------------------------------------------------------------- //
 
-			// Vertex / Vector 
-		struct {
-			float x, y, z, w;
+		union {
+				// Vertex / Vector 
+			struct {
+				float x, y, z, w;
+			};
+				// Color
+			struct {
+				float r, g, b, a;
+			};
+				// Texture coordinates
+			struct {
+				float s, t, p, q;
+			};
+		
+				// SSE register
+			__m128 m;
 		};
-			// Color
-		struct {
-			float r, g, b, a;
-		};
-			// Texture coordinates
-		struct {
-			float s, t, p, q;
-		};
-} vec4;
-
-inline const vec4 operator + (const vec4 &v, float f) {
-	return _mm_add_ps(v.m, _mm_set1_ps(f));
-}
-
-inline const vec4 operator + (const vec4 &v0, const vec4 &v1) {
-	return _mm_add_ps(v0.m, v1.m);
-}
-
-inline const vec4 operator - (const vec4 &v) {
-	return _mm_sub_ps(_mm_setzero_ps(), v.m);
-}
-
-inline const vec4 operator - (const vec4 &v, float f) {
-	return _mm_sub_ps(v.m, _mm_set1_ps(f));
-}
-
-inline const vec4 operator - (const vec4 &v0, const vec4 &v1) {
-	return _mm_sub_ps(v0.m, v1.m);
-}
-
-inline const vec4 operator * (const vec4 &v, float f) {
-	return _mm_mul_ps(v.m, _mm_set1_ps(f));
-}
-
-inline const vec4 operator * (const vec4 &v0, const vec4 &v1) {
-	return _mm_mul_ps(v0.m, v1.m);
-}
-
-inline const vec4 operator / (float f, const vec4 &v) {
-	return _mm_div_ps(_mm_set1_ps(f), v.m);
-}
-
-inline const vec4 operator / (const vec4 &v, float f) {
-	return _mm_div_ps(v.m, _mm_set1_ps(f));
-}
-
-inline const vec4 operator / (const vec4 &v0, const vec4 &v1) {
-	return _mm_div_ps(v0.m, v1.m);
-}		
+};	
 
 #define wzyx shuffle_rw<_MM_SHUFFLE(0,1,2,3)>()
 #define zwyx shuffle_rw<_MM_SHUFFLE(0,1,3,2)>()
