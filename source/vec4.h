@@ -1,6 +1,7 @@
 #ifndef __VEC4_H__
 #define __VEC4_H__
 
+#include <stdio.h>
 #include <math.h>
 #include <xmmintrin.h>
 
@@ -71,8 +72,8 @@ typedef union vec4
 				}
 				 
 					// Swizzle from same mask (v1.xyzw = v2.xyzw)
-				inline _swzl& operator = (_swzl &s) {
-					m = _mm_shuffle_ps(m, m, _mask_merger<mask>::MASK);
+				inline _swzl& operator = (const _swzl &s) {
+					m = s.m;
 					return *this;
 				}
 
