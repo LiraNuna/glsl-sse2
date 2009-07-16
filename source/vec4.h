@@ -37,6 +37,19 @@ typedef union vec4
 					MASK = ROW0 | ROW1 | ROW2 | ROW3,
 				};
 			};
+
+			struct _mask_reverser
+			{
+				enum
+				{
+					ROW0 = 0 << (((mask >> (0 * 2)) & 3) * 2),
+					ROW1 = 1 << (((mask >> (1 * 2)) & 3) * 2),
+					ROW2 = 2 << (((mask >> (2 * 2)) & 3) * 2),
+					ROW3 = 3 << (((mask >> (3 * 2)) & 3) * 2),
+
+					MASK = ROW0 | ROW1 | ROW2 | ROW3,
+				};
+			};
 			
 			inline _swzl(__m128 &m):m(m) { 
 				// Empty
@@ -48,14 +61,14 @@ typedef union vec4
 
 				// Swizzle from vec4
 			inline _swzl& operator = (const vec4 &v) {
-				m = _mm_shuffle_ps(v.m, v.m, mask);
+				m = _mm_shuffle_ps(v.m, v.m, _mask_reverser::MASK);
 				return *this;
 			}
 
 				// Swizzle from same mask (v1.xyzw = v2.xyzw)
 			inline _swzl& operator = (const _swzl &s) {
 				m = s._swizzled();
-				m = _swizzled();
+				m = _unswizzled();
 				return *this;
 			}
 
@@ -63,7 +76,7 @@ typedef union vec4
 			template<unsigned other_mask>
 			inline _swzl& operator = (const _swzl<other_mask> &s) {
 				m = s._swizzled();
-				m = _swizzled();
+				m = _unswizzled();
 				return *this;
 			}
 
@@ -94,6 +107,10 @@ typedef union vec4
 					// Retrieve swizzled self proxy
 				inline __m128 _swizzled() const {
 					return _mm_shuffle_ps(m, m, mask);
+				}
+
+				inline __m128 _unswizzled() const {
+					return _mm_shuffle_ps(m, m, _mask_reverser::MASK);
 				}
 		};
 
