@@ -83,7 +83,7 @@ typedef union bvec4
 			all = mask;
 		};
 
-		char all;
+		unsigned char all;
 } bvec4;
 
 #endif
