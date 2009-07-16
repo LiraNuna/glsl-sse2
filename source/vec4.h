@@ -54,8 +54,8 @@ class vec4
 				inline _swzl(__m128 &m):m(m) { 
 					// Empty
 				}
-
-				inline operator const vec4 () {
+				
+				inline operator const vec4 () const {
 					return _mm_shuffle_ps(m, m, mask);
 				}
 
@@ -134,12 +134,12 @@ class vec4
 		inline vec4(const vec4 &v) {
 			m = v.m;
 		}
-		
+
 			// SSE compatible constructor
 		inline vec4(const __m128 &_m) {
 			m = _m;
-		}
-
+		}		
+		
 		// ----------------------------------------------------------------- //
 
 			// Swizzled constructor
@@ -196,36 +196,44 @@ class vec4
 
 		// ----------------------------------------------------------------- //
 
-		inline vec4 operator += (float f) {
-			return (m = _mm_add_ps(m, _mm_set1_ps(f)));
+		friend inline vec4& operator += (vec4 &v, float f) {
+			v.m = _mm_add_ps(v.m, _mm_set1_ps(f));
+			return v;
 		}
 		
-		inline vec4 operator += (const vec4 &v) {
-			return (m = _mm_add_ps(m, v.m));
+		friend inline vec4 operator += (vec4 &v0, const vec4 &v1) {
+			v0.m = _mm_add_ps(v0.m, v1.m);
+			return v0;
 		}
 
-		inline vec4 operator -= (float f) {
-			return (m = _mm_sub_ps(m, _mm_set1_ps(f)));
+		friend inline vec4 operator -= (vec4 &v, float f) {
+			v.m = _mm_sub_ps(v.m, _mm_set1_ps(f));
+			return v;
 		}
 		
-		inline vec4 operator -= (const vec4 &v) {
-			return (m = _mm_sub_ps(m, v.m));
+		friend inline vec4 operator -= (vec4 &v0, const vec4 &v1) {
+			v0.m = _mm_sub_ps(v0.m, v1.m);
+			return v0;
 		}
 
-		inline vec4 operator *= (float f) {	
-			return (m = _mm_mul_ps(m, _mm_set1_ps(f)));
+		friend inline vec4 operator *= (vec4 &v, float f) {	
+			v.m = _mm_mul_ps(v.m, _mm_set1_ps(f));
+			return v;
 		}
 					
-		inline vec4 operator *= (const vec4 &v) {
-			return (m = _mm_mul_ps(m, v.m));
+		friend inline vec4 operator *= (vec4 &v0, const vec4 &v1) {
+			v0.m = _mm_mul_ps(v0.m, v1.m);
+			return v0;
 		}
 
-		inline vec4 operator /= (float f) {
-			return (m = _mm_div_ps(m, _mm_set1_ps(f)));
+		friend inline vec4 operator /= (vec4 &v, float f) {
+			v.m = _mm_div_ps(v.m, _mm_set1_ps(f));
+			return v;
 		}
 		
-		inline vec4 operator /= (const vec4 &v) {
-			return (m = _mm_div_ps(m, v.m));
+		friend inline vec4 operator /= (vec4 &v0, const vec4 &v1) {
+			v0.m = _mm_div_ps(v0.m, v1.m);
+			return v0;
 		}
 
 		// ----------------------------------------------------------------- //
