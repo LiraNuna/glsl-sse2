@@ -19,7 +19,13 @@ class vec4 :
 		static void testSwizzleWrite();
 		static void testSwizzleReadWrite();
 
+		static void testUnary();
+
 		static void testAccessors();
+
+	protected:
+		template<typename T>
+		static bool approxEqual(T a, T b, T fuzziness);
 };
 
 }

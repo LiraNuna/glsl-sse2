@@ -37,6 +37,7 @@ int main()
 	tests::vec4::testAccessors();
 	tests::vec4::testSwizzleEquality();
 	tests::vec4::testSwizzleWrite();
+	tests::vec4::testUnary();
 
 	vec4 v(4,3,2,1);
 	vec4 res(1, 2, 3, 4);
