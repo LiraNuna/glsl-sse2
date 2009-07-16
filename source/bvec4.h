@@ -46,11 +46,11 @@ typedef union bvec4
 		// ----------------------------------------------------------------- //
 
 		friend inline bool any(const bvec4 &b) {
-			return (b.all > 0);
+			return (b.all & 0xF) != 0x0;
 		}
 
 		friend inline bool all(const bvec4 &b) {
-			return (b.all == 0xF);
+			return (b.all & 0xF) == 0xF;
 		}
 
 		// ----------------------------------------------------------------- //
@@ -79,7 +79,7 @@ typedef union bvec4
 	private:
 
 			// Mask created from _mm_movemask_ps 
-		bvec4(int mask) {
+		explicit bvec4(int mask) {
 			all = mask;
 		};
 
