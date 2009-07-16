@@ -25,7 +25,7 @@ class vec4 :
 
 	protected:
 		template<typename T>
-		static bool approxEqual(T a, T b, T fuzziness);
+		static bool approxEqual(T a, T b, T fuzziness = 1.0F / (1 << 20));
 };
 
 }

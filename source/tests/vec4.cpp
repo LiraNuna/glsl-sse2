@@ -1,7 +1,7 @@
 #include "vec4.h"
 #include "../vec4.h"
 
-#include <limits>
+#include <cmath>
 
 namespace tests
 {
@@ -87,8 +87,8 @@ void vec4::testUnary()
 	::vec4 v(-1337, 42, -0, 85070591730234615865843651857942052864.F);	// bignum = 2**126
 
 	::vec4 v_sqrt = sqrt(v);
-	assert(isnan(v_sqrt.x));
-	assert(approxEqual(v_sqrt.y, 6.4807407F, 0.00001F));
+	assert(std::isnan(v_sqrt.x));
+	assert(approxEqual(v_sqrt.y, 6.4807407F));
 	assert(v_sqrt.z == 0);
 	assert(v_sqrt.w == 9223372036854775808.F);	// bignum = 2**63
 }
@@ -153,7 +153,7 @@ template<typename T>
 bool vec4::approxEqual(T a, T b, T fuzziness)
 {
 	T diff = a - b;
-	return abs(diff) <= fuzziness;
+	return std::abs(diff) <= fuzziness;
 }
 
 }
