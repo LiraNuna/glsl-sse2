@@ -19,6 +19,40 @@ typedef union vec4
 			m = _m;
 		}
 
+		template <unsigned char target, unsigned mask>
+		struct _mask_merger
+		{
+			enum
+			{
+				ROW0 = ((target >> (((mask >> (0 * 2)) & 3) << 1)) & 3) << (0 * 2),
+				ROW1 = ((target >> (((mask >> (1 * 2)) & 3) << 1)) & 3) << (1 * 2),
+				ROW2 = ((target >> (((mask >> (2 * 2)) & 3) << 1)) & 3) << (2 * 2),
+				ROW3 = ((target >> (((mask >> (3 * 2)) & 3) << 1)) & 3) << (3 * 2),
+
+				MASK = ROW0 | ROW1 | ROW2 | ROW3,
+			};
+
+			private:
+				_mask_merger();
+		};
+
+		template <unsigned char mask>
+		struct _mask_reverser
+		{
+			enum
+			{
+				ROW0 = 0 << (((mask >> 0) & 3) * 2),
+				ROW1 = 1 << (((mask >> 2) & 3) * 2),
+				ROW2 = 2 << (((mask >> 4) & 3) * 2),
+				ROW3 = 3 << (((mask >> 6) & 3) * 2),
+
+				MASK = ROW0 | ROW1 | ROW2 | ROW3,
+			};
+
+			private:
+				_mask_reverser();
+		};
+
 			// Swizzle helper
 		template <unsigned mask>
 		struct _swzl
@@ -29,33 +63,6 @@ typedef union vec4
 					// Refrence to unswizzled self
 				__m128 &m;
 
-				template <unsigned other_mask>
-				struct _mask_merger
-				{
-					enum
-					{
-						ROW0 = ((mask >> (((other_mask >> (0 * 2)) & 3) << 1)) & 3) << (0 * 2),
-						ROW1 = ((mask >> (((other_mask >> (1 * 2)) & 3) << 1)) & 3) << (1 * 2),
-						ROW2 = ((mask >> (((other_mask >> (2 * 2)) & 3) << 1)) & 3) << (2 * 2),
-						ROW3 = ((mask >> (((other_mask >> (3 * 2)) & 3) << 1)) & 3) << (3 * 2),
-
-						MASK = ROW0 | ROW1 | ROW2 | ROW3,
-					};
-				};
-
-				struct _mask_reverser
-				{
-					enum
-					{
-						ROW0 = 0 << (((mask >> 0) & 3) * 2),
-						ROW1 = 1 << (((mask >> 2) & 3) * 2),
-						ROW2 = 2 << (((mask >> 4) & 3) * 2),
-						ROW3 = 3 << (((mask >> 6) & 3) * 2),
-
-						MASK = ROW0 | ROW1 | ROW2 | ROW3,
-					};
-				};
-			
 			public:
 				inline _swzl(__m128 &m):m(m) { 
 					// Empty
@@ -67,7 +74,7 @@ typedef union vec4
 
 					// Swizzle from vec4
 				inline _swzl& operator = (const vec4 &v) {
-					m = _mm_shuffle_ps(v.m, v.m, _mask_reverser::MASK);
+					m = _mm_shuffle_ps(v.m, v.m, _mask_reverser<mask>::MASK);
 					return *this;
 				}
 				 
@@ -80,27 +87,32 @@ typedef union vec4
 					// Swizzle mask => other_mask (v1.zwxy = v2.xyxy)
 				template<unsigned other_mask>
 				inline _swzl& operator = (const _swzl<other_mask> &s) {
-					__m128 _m = _mm_shuffle_ps(s.m, s.m, other_mask);
-					m = _mm_shuffle_ps(_m, _m, _mask_reverser::MASK);
+						// Needed because shuffle below is a macro and is confused by the template commas.
+					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
+					m = _mm_shuffle_ps(s.m, s.m, merged::MASK);
 					return *this;
 				}
 
 					// Swizzle of the swizzle, read only (v.xxxx.yyyy)
 				template<unsigned other_mask>
 				inline const vec4 shuffle_ro() const {
-					return _mm_shuffle_ps(m, m, _mask_merger<other_mask>::MASK);
+						// Needed because shuffle below is a macro and is confused by the template commas.
+					typedef _mask_merger<mask, other_mask> merged;
+					return _mm_shuffle_ps(m, m, merged::MASK);
 				}
 
 					// Swizzle of the swizzle, read/write (v1.zyxw.wzyx = ...)
 				template<unsigned other_mask>
-				inline _swzl<_mask_merger<other_mask>::MASK> shuffle_rw() {
-					return _swzl<_mask_merger<other_mask>::MASK>(m);
+				inline _swzl<_mask_merger<mask, other_mask>::MASK> shuffle_rw() {
+					return _swzl<_mask_merger<mask, other_mask>::MASK>(m);
 				}
 
 					// Swizzle of the swizzle, read/write const correct
 				template<unsigned other_mask>
 				inline _swzl<other_mask> shuffle_rw() const {
-					return _mm_shuffle_ps(m, m, _mask_merger<other_mask>::MASK);
+						// Needed because shuffle below is a macro and is confused by the template commas.
+					typedef _mask_merger<mask, other_mask> merged;
+					return _mm_shuffle_ps(m, m, merged::MASK);
 				}
 		};
 
