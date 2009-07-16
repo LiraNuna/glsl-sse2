@@ -65,7 +65,7 @@ void vec4::testSwizzleWrite()
 	assert(v == ::vec4(4, 1, 2, 3));
 
 	v.yxzw = ::vec4(1, 2, 3, 4);
-	assert(v == ::vec4(4, 3, 1, 2));
+	assert(v == ::vec4(2, 1, 3, 4));
 }
 
 void vec4::testAccessors()
