@@ -51,23 +51,26 @@ class vec4
 			friend class vec4;
 
 			public:
-				inline _swzl(__m128 &m):m(m) { 
-					// Empty
+				inline _swzl(vec4 &v):
+					x(v[(mask >> 0) & 0x3]), y(v[(mask >> 2) & 0x3]),
+					z(v[(mask >> 4) & 0x3]), w(v[(mask >> 6) & 0x3]),
+					v(v) {
+						// Empty
 				}
 				
 				inline operator const vec4 () const {
-					return _mm_shuffle_ps(m, m, mask);
+					return _mm_shuffle_ps(v.m, v.m, mask);
 				}
 
 					// Swizzle from vec4
-				inline _swzl& operator = (const vec4 &v) {
-					m = _mm_shuffle_ps(v.m, v.m, _mask_reverser<mask>::MASK);
+				inline _swzl& operator = (const vec4 &r) {
+					v.m = _mm_shuffle_ps(r.m, r.m, _mask_reverser<mask>::MASK);
 					return *this;
 				}
 				 
 					// Swizzle from same mask (v1.xyzw = v2.xyzw)
 				inline _swzl& operator = (const _swzl &s) {
-					m = s.m;
+					v.m = s.v.m;
 					return *this;
 				}
 
@@ -76,7 +79,7 @@ class vec4
 				inline _swzl& operator = (const _swzl<other_mask> &s) {
 						// Needed because shuffle below is a macro and is confused by the template commas.
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
-					m = _mm_shuffle_ps(s.m, s.m, merged::MASK);
+					v.m = _mm_shuffle_ps(s.v.m, s.v.m, merged::MASK);
 					return *this;
 				}
 
@@ -91,20 +94,22 @@ class vec4
 					// Swizzle of the swizzle, read/write (v1.zyxw.wzyx = ...)
 				template<unsigned other_mask>
 				inline _swzl<_mask_merger<mask, other_mask>::MASK> shuffle_rw() {
-					return _swzl<_mask_merger<mask, other_mask>::MASK>(m);
+					return _swzl<_mask_merger<mask, other_mask>::MASK>(v);
 				}
 
 					// Swizzle of the swizzle, read/write const correct
 				template<unsigned other_mask>
-				inline _swzl<other_mask> shuffle_rw() const {
+				inline const vec4 shuffle_rw() const {
 						// Needed because shuffle below is a macro and is confused by the template commas.
 					typedef _mask_merger<mask, other_mask> merged;
 					return _mm_shuffle_ps(m, m, merged::MASK);
 				}
 
+				float &x, &y, &z, &w;
+
 			private:
 					// Refrence to unswizzled self
-				__m128 &m;
+				vec4 &v;
 		};
 
 		// ----------------------------------------------------------------- //
@@ -151,7 +156,7 @@ class vec4
 			// Read-write swizzle
 		template<unsigned mask>
 		inline _swzl<mask> shuffle_rw() {
-			return _swzl<mask>(m);
+			return _swzl<mask>(*this);
 		}
 
 			// Read-write (actual read only) swizzle, const
