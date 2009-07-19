@@ -6,7 +6,6 @@
 typedef union bvec4
 {
 	public:
-
 		bvec4(bool _x, bool _y, bool _z, bool _w):
 			x(_x), y(_y), z(_z), w(_w) {
 			// Empty
@@ -19,42 +18,37 @@ typedef union bvec4
 			return bvec4(0xF - all);
 		}
 */
-		friend inline const bvec4 equal(const vec4 &v0, const vec4 &v1) {
-			return bvec4(_mm_movemask_ps(_mm_cmpeq_ps(v0.m, v1.m)));
-		}
+		friend inline const bvec4 equal(const vec4 &v0, const vec4 &v1);
 
-		friend inline const bvec4 notEqual(const vec4 &v0, const vec4 &v1) {
-			return bvec4(_mm_movemask_ps(_mm_cmpneq_ps(v0.m, v1.m)));
-		}
+		friend inline const bvec4 notEqual(const vec4 &v0, const vec4 &v1);
 
-		friend inline const bvec4 greaterThan(const vec4 &v0, const vec4 &v1) {
-			return bvec4(_mm_movemask_ps(_mm_cmpgt_ps(v0.m, v1.m)));
-		}
+		friend inline const bvec4 greaterThan(const vec4 &v0, const vec4 &v1);
 
-		friend inline const bvec4 greaterThanEqual(const vec4 &v0, const vec4 &v1) {
-			return bvec4(_mm_movemask_ps(_mm_cmpge_ps(v0.m, v1.m)));
-		}
+		friend inline const bvec4 greaterThanEqual(const vec4 &v0, const vec4 &v1);
 
-		friend inline const bvec4 lessThan(const vec4 &v0, const vec4 &v1) {
-			return bvec4(_mm_movemask_ps(_mm_cmplt_ps(v0.m, v1.m)));
-		}
+		friend inline const bvec4 lessThan(const vec4 &v0, const vec4 &v1);
 
-		friend inline const bvec4 lessThanEqual(const vec4 &v0, const vec4 &v1) {
-			return bvec4(_mm_movemask_ps(_mm_cmple_ps(v0.m, v1.m)));
-		}
+		friend inline const bvec4 lessThanEqual(const vec4 &v0, const vec4 &v1);
 
 		// ----------------------------------------------------------------- //
 
-		friend inline bool any(const bvec4 &b) {
-			return (b.all & 0xF) != 0x0;
-		}
-
-		friend inline bool all(const bvec4 &b) {
-			return (b.all & 0xF) == 0xF;
-		}
+		friend inline bool any(const bvec4 &b);
+		
+		friend inline bool all(const bvec4 &b);
 
 		// ----------------------------------------------------------------- //
 
+		friend inline bool operator == (const bvec4 &b0, const bvec4 &b1) {
+			return (b0.all & 0xF) == (b1.all & 0xF);
+		}
+
+		friend inline bool operator != (const bvec4 &b0, const bvec4 &b1) {
+			return (b0.all & 0xF) != (b1.all & 0xF);
+		}
+		
+		// ----------------------------------------------------------------- //
+
+			// Vertex / Vector 
 		struct {
 			bool x :1;
 			bool y :1;
@@ -85,5 +79,39 @@ typedef union bvec4
 
 		unsigned char all;
 } bvec4;
+
+inline const bvec4 equal(const vec4 &v0, const vec4 &v1) {
+	return bvec4(_mm_movemask_ps(_mm_cmpeq_ps(v0.m, v1.m)));
+}
+
+inline const bvec4 notEqual(const vec4 &v0, const vec4 &v1) {
+	return bvec4(_mm_movemask_ps(_mm_cmpneq_ps(v0.m, v1.m)));
+}
+
+inline const bvec4 greaterThan(const vec4 &v0, const vec4 &v1) {
+	return bvec4(_mm_movemask_ps(_mm_cmpgt_ps(v0.m, v1.m)));
+}
+
+inline const bvec4 greaterThanEqual(const vec4 &v0, const vec4 &v1) {
+	return bvec4(_mm_movemask_ps(_mm_cmpge_ps(v0.m, v1.m)));
+}
+
+inline const bvec4 lessThan(const vec4 &v0, const vec4 &v1) {
+	return bvec4(_mm_movemask_ps(_mm_cmplt_ps(v0.m, v1.m)));
+}
+
+inline const bvec4 lessThanEqual(const vec4 &v0, const vec4 &v1) {
+	return bvec4(_mm_movemask_ps(_mm_cmple_ps(v0.m, v1.m)));
+}
+
+// ------------------------------------------------------------------------- //
+
+inline bool any(const bvec4 &b) {
+	return (b.all & 0xF) != 0x0;
+}
+
+inline bool all(const bvec4 &b) {
+	return (b.all & 0xF) == 0xF;
+}
 
 #endif
