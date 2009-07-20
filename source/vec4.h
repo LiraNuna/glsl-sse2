@@ -48,20 +48,6 @@ class vec4
 				};
 
 			public:
-				inline _swzl(vec4 &v):
-					x(v[(mask >> 0) & 0x3]), y(v[(mask >> 2) & 0x3]),
-					z(v[(mask >> 4) & 0x3]), w(v[(mask >> 6) & 0x3]),
-
-					r(v[(mask >> 0) & 0x3]), g(v[(mask >> 2) & 0x3]),
-					b(v[(mask >> 4) & 0x3]), a(v[(mask >> 6) & 0x3]),
-
-					s(v[(mask >> 0) & 0x3]), t(v[(mask >> 2) & 0x3]),
-					p(v[(mask >> 4) & 0x3]), q(v[(mask >> 6) & 0x3]),
-
-					v(v) {
-						// Empty
-				}
-				
 				inline operator const vec4 () const {
 					return _mm_shuffle_ps(v.m, v.m, mask);
 				}
@@ -88,14 +74,14 @@ class vec4
 
 					// Swizzle of the swizzle, read only (v.xxxx.yyyy)
 				template<unsigned other_mask>
-				inline const vec4 shuffle_ro() const {
+				inline const vec4 shuffle4_ro() const {
 					typedef _mask_merger<mask, other_mask> merged;
 					return _mm_shuffle_ps(v.m, v.m, merged::MASK);
 				}
 
 					// Swizzle of the swizzle, read/write (v1.zyxw.wzyx = ...)
 				template<unsigned other_mask>
-				inline _swzl<_mask_merger<mask, other_mask>::MASK> shuffle_rw() {
+				inline _swzl<_mask_merger<mask, other_mask>::MASK> shuffle4_rw() {
 					return _swzl<_mask_merger<mask, other_mask>::MASK>(v);
 				}
 
@@ -104,6 +90,21 @@ class vec4
 				float &s, &t, &p, &q;
 
 			private:
+					// This massive contructor maps a vector to references
+				inline _swzl(vec4 &v):
+					x(v[(mask >> 0) & 0x3]), y(v[(mask >> 2) & 0x3]),
+					z(v[(mask >> 4) & 0x3]), w(v[(mask >> 6) & 0x3]),
+
+					r(v[(mask >> 0) & 0x3]), g(v[(mask >> 2) & 0x3]),
+					b(v[(mask >> 4) & 0x3]), a(v[(mask >> 6) & 0x3]),
+
+					s(v[(mask >> 0) & 0x3]), t(v[(mask >> 2) & 0x3]),
+					p(v[(mask >> 4) & 0x3]), q(v[(mask >> 6) & 0x3]),
+
+					v(v) {
+						// Empty
+				}
+
 					// Refrence to unswizzled self
 				vec4 &v;
 		};
@@ -145,19 +146,19 @@ class vec4
 
 			// Read-write swizzle
 		template<unsigned mask>
-		inline _swzl<mask> shuffle_rw() {
+		inline _swzl<mask> shuffle4_rw() {
 			return _swzl<mask>(*this);
 		}
 
 			// Read-write (actually read only) swizzle, const
 		template<unsigned mask>
-		inline const vec4 shuffle_rw() const {
+		inline const vec4 shuffle4_rw() const {
 			return _mm_shuffle_ps(m, m, mask);
 		}
 		
 			// Read-only swizzle
 		template<unsigned mask>
-		inline const vec4 shuffle_ro() const {
+		inline const vec4 shuffle4_ro() const {
 			return _mm_shuffle_ps(m, m, mask);
 		}
 
