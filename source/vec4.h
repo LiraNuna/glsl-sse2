@@ -5,9 +5,6 @@
 
 class vec4
 {	
-		// FIXME until c++0x comes out for mat4 unrestricted unions
-	friend union mat4;
-
 	private:
 			// Swizzle helper
 		template <unsigned mask>
@@ -16,7 +13,7 @@ class vec4
 			friend class vec4;
 
 			private:
-				template <unsigned char target, unsigned m>
+				template <unsigned target, unsigned m>
 				struct _mask_merger
 				{
 					enum
@@ -33,7 +30,7 @@ class vec4
 						_mask_merger();
 				};
 
-				template <unsigned char m>
+				template <unsigned m>
 				struct _mask_reverser
 				{
 					enum
@@ -146,31 +143,19 @@ class vec4
 		
 		// ----------------------------------------------------------------- //
 
-			// Swizzled constructor
-		template<unsigned mask>
-		inline vec4(const _swzl<mask> &v) {
-			m = _mm_shuffle_ps(v.m, v.m, mask);
-		}
-
 			// Read-write swizzle
 		template<unsigned mask>
 		inline _swzl<mask> shuffle_rw() {
 			return _swzl<mask>(*this);
 		}
 
-			// Read-write (actual read only) swizzle, const
+			// Read-write (actually read only) swizzle, const
 		template<unsigned mask>
 		inline const vec4 shuffle_rw() const {
 			return _mm_shuffle_ps(m, m, mask);
 		}
-
+		
 			// Read-only swizzle
-		template<unsigned mask>
-		inline const vec4 shuffle_ro() {
-			return _mm_shuffle_ps(m, m, mask);
-		}
-
-			// Read-only swizzle, const
 		template<unsigned mask>
 		inline const vec4 shuffle_ro() const {
 			return _mm_shuffle_ps(m, m, mask);
@@ -487,7 +472,7 @@ class vec4
 		}
 		
 		// ----------------------------------------------------------------- //
-
+		
 		union {
 				// Vertex / Vector 
 			struct {
