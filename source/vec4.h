@@ -490,8 +490,6 @@ class vec4
 		
 				// SSE register
 			__m128 m;
-				// SSE2 register
-			__m128i mi;
 		};
 };	
 
