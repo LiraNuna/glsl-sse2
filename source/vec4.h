@@ -191,37 +191,37 @@ class vec4
 			return v;
 		}
 		
-		friend inline vec4 operator += (vec4 &v0, const vec4 &v1) {
+		friend inline vec4& operator += (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_add_ps(v0.m, v1.m);
 			return v0;
 		}
 
-		friend inline vec4 operator -= (vec4 &v, float f) {
+		friend inline vec4& operator -= (vec4 &v, float f) {
 			v.m = _mm_sub_ps(v.m, _mm_set1_ps(f));
 			return v;
 		}
 		
-		friend inline vec4 operator -= (vec4 &v0, const vec4 &v1) {
+		friend inline vec4& operator -= (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_sub_ps(v0.m, v1.m);
 			return v0;
 		}
 
-		friend inline vec4 operator *= (vec4 &v, float f) {	
+		friend inline vec4& operator *= (vec4 &v, float f) {	
 			v.m = _mm_mul_ps(v.m, _mm_set1_ps(f));
 			return v;
 		}
 					
-		friend inline vec4 operator *= (vec4 &v0, const vec4 &v1) {
+		friend inline vec4& operator *= (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_mul_ps(v0.m, v1.m);
 			return v0;
 		}
 
-		friend inline vec4 operator /= (vec4 &v, float f) {
+		friend inline vec4& operator /= (vec4 &v, float f) {
 			v.m = _mm_div_ps(v.m, _mm_set1_ps(f));
 			return v;
 		}
 		
-		friend inline vec4 operator /= (vec4 &v0, const vec4 &v1) {
+		friend inline vec4& operator /= (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_div_ps(v0.m, v1.m);
 			return v0;
 		}
@@ -490,6 +490,8 @@ class vec4
 		
 				// SSE register
 			__m128 m;
+				// SSE2 register
+			__m128i mi;
 		};
 };	
 
