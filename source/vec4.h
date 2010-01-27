@@ -336,7 +336,8 @@ class vec4
 			return _mm_min_ps(v0.m, v1.m);
 		}
 
-		friend inline const vec4 mix(const vec4 &v0, const vec4 &v1, float f) {
+		friend inline const vec4 mix(const vec4 &v0, const vec4 &v1,
+									 float f) {
 			return _mm_sub_ps(v1.m, _mm_mul_ps(_mm_set1_ps(f),
 			                                   _mm_add_ps(v0.m, v1.m)));
 		}
@@ -400,6 +401,12 @@ class vec4
 			return _mm_and_ps(_mm_cmple_ps(v0.m, v1.m), _mm_set1_ps(1.0f));
 		}
 
+		friend inline const vec4 trunc(const vec4 &v) {
+			__m128 t = _mm_or_ps(_mm_and_ps(_mm_set1_ps(-0.f), v.m),
+			                     _mm_set1_ps(1 << 23));
+			return _mm_sub_ps(_mm_add_ps(v.m, t), t);
+		}
+
 		// ----------------------------------------------------------------- //
 
 		friend inline float distance(const vec4 &v0, const vec4 &v1) {
@@ -447,7 +454,8 @@ class vec4
 			return _mm_sub_ps(v0.m, _mm_mul_ps(_mm_add_ps(l, l), v1.m));
 		}
 
-		friend inline const vec4 refract(const vec4 &v0, const vec4 &v1, float f) {
+		friend inline const vec4 refract(const vec4 &v0, const vec4 &v1,
+										 float f) {
 			__m128 d = _mm_mul_ps(v1.m, v0.m);
 			d = _mm_add_ps(d, _mm_shuffle_ps(d, d, 0x4E));
 			d = _mm_add_ps(d, _mm_shuffle_ps(d, d, 0x11));
