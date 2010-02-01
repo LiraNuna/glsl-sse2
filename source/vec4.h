@@ -1,11 +1,16 @@
 #ifndef __VEC4_H__
 #define __VEC4_H__
 
-#include <xmmintrin.h>
+#include <emmintrin.h>
 
 class vec4
-{	
+{
 	private:
+			// Most compilers don't use pshufd (SSE2) when _mm_shuffle(x, x, mask) is used
+			// This macro saves 2-3 movaps instructions when shuffling
+			// This has to be a macro since mask HAS to be an immidiate value
+		#define _mm_shufd(xmm, mask) _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(xmm), mask))
+		
 			// Swizzle helper
 		template <unsigned mask>
 		struct _swzl
@@ -49,12 +54,12 @@ class vec4
 
 			public:
 				inline operator const vec4 () const {
-					return _mm_shuffle_ps(v.m, v.m, mask);
+					return _mm_shuffle_epi32(v.mi, mask);
 				}
 
 					// Swizzle from vec4
 				inline _swzl& operator = (const vec4 &r) {
-					v.m = _mm_shuffle_ps(r.m, r.m, _mask_reverser<mask>::MASK);
+					v.mi = _mm_shuffle_epi32(r.mi, _mask_reverser<mask>::MASK);
 					return *this;
 				}
 				 
@@ -68,7 +73,7 @@ class vec4
 				template<unsigned other_mask>
 				inline _swzl& operator = (const _swzl<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
-					v.m = _mm_shuffle_ps(s.v.m, s.v.m, merged::MASK);
+					v.mi = _mm_shuffle_epi32(s.v.mi, merged::MASK);
 					return *this;
 				}
 
@@ -76,13 +81,14 @@ class vec4
 				template<unsigned other_mask>
 				inline const vec4 shuffle4_ro() const {
 					typedef _mask_merger<mask, other_mask> merged;
-					return _mm_shuffle_ps(v.m, v.m, merged::MASK);
+					return _mm_shuffle_epi32(v.mi, merged::MASK);
 				}
 
 					// Swizzle of the swizzle, read/write (v1.zyxw.wzyx = ...)
 				template<unsigned other_mask>
 				inline _swzl<_mask_merger<mask, other_mask>::MASK> shuffle4_rw() {
-					return _swzl<_mask_merger<mask, other_mask>::MASK>(v);
+					typedef _mask_merger<mask, other_mask> merged;
+					return _swzl<merged::MASK>(v);
 				}
 
 				float &x, &y, &z, &w;
@@ -140,6 +146,11 @@ class vec4
 			// SSE compatible constructor
 		inline vec4(const __m128 &_m) {
 			m = _m;
+		}
+		
+			// SSE2 compatible constructor
+		inline vec4(const __m128i &_mi) {
+			mi = _mi;
 		}		
 		
 		// ----------------------------------------------------------------- //
@@ -153,13 +164,13 @@ class vec4
 			// Read-write (actually read only) swizzle, const
 		template<unsigned mask>
 		inline const vec4 shuffle4_rw() const {
-			return _mm_shuffle_ps(m, m, mask);
+			return _mm_shuffle_epi32(mi, mask);
 		}
 		
 			// Read-only swizzle
 		template<unsigned mask>
 		inline const vec4 shuffle4_ro() const {
-			return _mm_shuffle_ps(m, m, mask);
+			return _mm_shuffle_epi32(mi, mask);
 		}
 
 		// ----------------------------------------------------------------- //
@@ -210,7 +221,7 @@ class vec4
 			v.m = _mm_mul_ps(v.m, _mm_set1_ps(f));
 			return v;
 		}
-					
+
 		friend inline vec4& operator *= (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_mul_ps(v0.m, v1.m);
 			return v0;
@@ -412,53 +423,53 @@ class vec4
 		friend inline float distance(const vec4 &v0, const vec4 &v1) {
 			__m128 l = _mm_sub_ps(v0.m, v1.m);
 			l = _mm_mul_ps(l, l);
-			l = _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x4E));
+			l = _mm_add_ps(l, _mm_shufd(l, 0x4E));
 			return _mm_cvtss_f32(_mm_sqrt_ss(_mm_add_ss(l,
-			                                 _mm_shuffle_ps(l, l, 0x11))));
+			                                 _mm_shufd(l, 0x11))));
 		}
 
 		friend inline float dot(const vec4 &v0, const vec4 &v1) {
 			__m128 l = _mm_mul_ps(v0.m, v1.m);
-			l = _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x4E));
-			return _mm_cvtss_f32(_mm_add_ss(l, _mm_shuffle_ps(l, l, 0x11)));
+			l = _mm_add_ps(l, _mm_shufd(l, 0x4E));
+			return _mm_cvtss_f32(_mm_add_ss(l, _mm_shufd(l, 0x11)));
 
 		}
 
 		friend inline const vec4 faceforward(const vec4 &v0,
 		                                     const vec4 &v1, const vec4 &v2) {
 			__m128 l = _mm_mul_ps(v2.m, v1.m);
-			l = _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x4E));
+			l = _mm_add_ps(l, _mm_shufd(l, 0x4E));
 			return _mm_xor_ps(_mm_and_ps(_mm_cmpnlt_ps(
-			        _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x11)),
+			        _mm_add_ps(l, _mm_shufd(l, 0x11)),
 			        _mm_setzero_ps()), _mm_set1_ps(-0.f)), v0.m);
 		}
 
 		friend inline float length(const vec4 &v) {
 			__m128 l = _mm_mul_ps(v.m, v.m);
-			l = _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x4E));
+			l = _mm_add_ps(l, _mm_shufd(l, 0x4E));
 			return _mm_cvtss_f32(_mm_sqrt_ss(_mm_add_ss(l,
-			                                 _mm_shuffle_ps(l, l, 0x11))));
+			                                 _mm_shufd(l, 0x11))));
 		}
 
 		friend inline const vec4 normalize(const vec4 &v) {
 			__m128 l = _mm_mul_ps(v.m, v.m);
-			l = _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x4E));
+			l = _mm_add_ps(l, _mm_shufd(l, 0x4E));
 			return _mm_div_ps(v.m, _mm_sqrt_ps(_mm_add_ps(l,
-			                                   _mm_shuffle_ps(l, l, 0x11))));
+			                                   _mm_shufd(l, 0x11))));
 		}
 
 		friend inline const vec4 reflect(const vec4 &v0, const vec4 &v1) {
 			__m128 l = _mm_mul_ps(v1.m, v0.m);
-			l = _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x4E));
-			l = _mm_add_ps(l, _mm_shuffle_ps(l, l, 0x11));
+			l = _mm_add_ps(l, _mm_shufd(l, 0x4E));
+			l = _mm_add_ps(l, _mm_shufd(l, 0x11));
 			return _mm_sub_ps(v0.m, _mm_mul_ps(_mm_add_ps(l, l), v1.m));
 		}
 
 		friend inline const vec4 refract(const vec4 &v0, const vec4 &v1,
 										 float f) {
 			__m128 d = _mm_mul_ps(v1.m, v0.m);
-			d = _mm_add_ps(d, _mm_shuffle_ps(d, d, 0x4E));
-			d = _mm_add_ps(d, _mm_shuffle_ps(d, d, 0x11));
+			d = _mm_add_ps(d, _mm_shufd(d, 0x4E));
+			d = _mm_add_ps(d, _mm_shufd(d, 0x11));
 			__m128 e = _mm_set1_ps(f);
 			__m128 k = _mm_sub_ps(_mm_set1_ps(1.0f),
 			                      _mm_mul_ps(_mm_mul_ps(e, e),
@@ -497,8 +508,12 @@ class vec4
 			};
 		
 				// SSE register
-			__m128 m;
+			__m128	m;
+			__m128i	mi;
 		};
+	
+		// Avoid pollution
+	#undef _mm_shufd
 };	
 
 #include "swizzle.h"
