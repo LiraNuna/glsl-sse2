@@ -112,7 +112,7 @@ DEPENDS	:=	$(OFILES:.o=.d)
 $(OUTPUT)	:	$(OFILES)
 	@echo linking...
 	@$(LD)  $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
-	@strip $@
+	@$(CROSS)strip $@
 	@echo built $(notdir $@)
 
 -include $(DEPENDS)
