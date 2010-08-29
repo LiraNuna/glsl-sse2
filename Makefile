@@ -24,7 +24,7 @@ VERSION		:=
 #---------------------------------------------------------------------------------
 ASFLAGS		:=	
 CFLAGS		:=	-W -Wall -msse2 -g -O2
-CXXFLAGS	:=	-fno-rtti -fno-exceptions -fomit-frame-pointer -ffast-math
+CXXFLAGS	:=	-fno-rtti -fno-exceptions -fomit-frame-pointer
 LDFLAGS		:=	
 
 #---------------------------------------------------------------------------------
