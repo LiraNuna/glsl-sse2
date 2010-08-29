@@ -23,7 +23,7 @@ VERSION		:=
 # options for code generation
 #---------------------------------------------------------------------------------
 ASFLAGS		:=	
-CFLAGS		:=	-W -Wall -msse2 -save-temps -g -O2
+CFLAGS		:=	-W -Wall -msse2 -g -O2
 CXXFLAGS	:=	-fno-rtti -fno-exceptions -fomit-frame-pointer -ffast-math
 LDFLAGS		:=	
 
