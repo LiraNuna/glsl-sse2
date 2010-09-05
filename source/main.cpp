@@ -41,18 +41,21 @@ int main()
 
 	vec4 v(4,3,2,1);
 	vec4 res(1, 2, 3, 4);
-	
+
 	v.xyzw = res;
 	assert(v == res);
 
 	res = vec4(5, 6, 7, 8);
 	assert(res == vec4(5, 6, 7, 8));
-	
+
 	v.wzyx = vec4(0.f, -0.f, 1.f, -1.f);
 	assert(v == vec4(-1.f, 1, -0.f, 0.f));
 
 	v.wzyx = res.xyxy;
 	assert(v == vec4(6, 5, 6, 5));
+
+	v.wzyx = res.xxxx.yyyy;
+	assert(v == vec4(5, 5, 5, 5));
 
 		// const correctness
 	const vec4 c(1, 2, 3, 4);
@@ -66,6 +69,8 @@ int main()
 	assert(c.wyzx.wyzx.wyzx == c.wyzx);
 	assert(c.wyzx.wyzx.wyzx.wyzx == c);
 	assert(c.wyzx.wyzx.wyzx.wyzx.x == c.x);
-	
+
+	printf("All tests passed\n");
+
 	return 0;
 }
