@@ -311,12 +311,12 @@ class vec4
 			return _mm_add_ps(v0.m, v1.m);
 		}
 
-		inline const vec4 operator - () {
-			return _mm_xor_ps(m, _mm_set1_ps(-0.f));
+		friend inline const vec4 operator - (const vec4 &v) {
+			return _mm_xor_ps(v.m, _mm_set1_ps(-0.f));
 		}
 
-		friend inline const vec4 operator - (const vec4 &v) {
-			return _mm_sub_ps(_mm_setzero_ps(), v.m);
+		friend inline const vec4 operator - (float f, const vec4 &v) {
+			return _mm_sub_ps( _mm_set1_ps(f), v.m);
 		}
 
 		friend inline const vec4 operator - (const vec4 &v, float f) {
