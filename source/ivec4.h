@@ -179,7 +179,7 @@ class ivec4
 	public:
 			// Empty constructor
 		inline ivec4() {
-			m = _mm_castps_si128(_mm_setzero_ps());
+			m = _mm_setzero_si128();
 		}
 
 			// Fill constructor
@@ -302,7 +302,7 @@ class ivec4
 		}
 
 		friend inline const ivec4 operator - (const ivec4 &v) {
-			return _mm_sub_epi32(_mm_set1_epi32(0), v.m);
+			return _mm_sub_epi32(_mm_setzero_si128(), v.m);
 		}
 
 		friend inline const ivec4 operator - (int32_t i, const ivec4 &v) {
@@ -374,7 +374,7 @@ class ivec4
 		}
 
 		friend inline const ivec4 sign(const ivec4 &v) {
-			return _mm_or_si128(_mm_add_epi32(_mm_cmpeq_epi32(v.m, _mm_set1_epi32(0)),
+			return _mm_or_si128(_mm_add_epi32(_mm_cmpeq_epi32(v.m, _mm_setzero_si128()),
 											  _mm_set1_epi32(1)),_mm_srai_epi32(v.m, 31));
 		}
 
