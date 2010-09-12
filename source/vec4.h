@@ -552,7 +552,7 @@ class vec4
 		}
 
 		friend inline bool operator != (const vec4 &v0, const vec4 &v1) {
-			return (_mm_movemask_ps(_mm_cmpneq_ps(v0.m, v1.m)) == 0xF);
+			return (_mm_movemask_ps(_mm_cmpneq_ps(v0.m, v1.m)) != 0x0);
 		}
 		
 		// ----------------------------------------------------------------- //
