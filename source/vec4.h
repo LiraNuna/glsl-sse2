@@ -303,6 +303,10 @@ class vec4
 
 		// ----------------------------------------------------------------- //
 
+		friend inline const vec4 operator + (float f, const vec4 &v) {
+			return _mm_add_ps(_mm_set1_ps(f), v.m);
+		}
+
 		friend inline const vec4 operator + (const vec4 &v, float f) {
 			return _mm_add_ps(v.m, _mm_set1_ps(f));
 		}
@@ -325,6 +329,10 @@ class vec4
 
 		friend inline const vec4 operator - (const vec4 &v0, const vec4 &v1) {
 			return _mm_sub_ps(v0.m, v1.m);
+		}
+
+		friend inline const vec4 operator * (float f, const vec4 &v) {
+			return _mm_mul_ps(_mm_set1_ps(f), v.m);
 		}
 
 		friend inline const vec4 operator * (const vec4 &v, float f) {
