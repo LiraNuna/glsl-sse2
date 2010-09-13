@@ -462,8 +462,7 @@ class vec4
 			                                 _mm_sub_ps(_mm_sub_ps(v.m, v0),
 											 _mm_sub_ps(_mm_set1_ps(f2), v0))));
 			return _mm_mul_ps(_mm_mul_ps(c, c),
-			                  _mm_sub_ps(_mm_set1_ps(3.0f),
-			                             _mm_mul_ps(_mm_set1_ps(2.0f), c)));
+			                  _mm_sub_ps(_mm_set1_ps(3.0f), _mm_add_ps(c, c)));
 		}
 		
 		friend inline const vec4 smoothstep(const vec4 &v0,
@@ -473,8 +472,7 @@ class vec4
 			                                 _mm_sub_ps(_mm_sub_ps(v2.m, v0.m),
 			                                            _mm_sub_ps(v1.m, v0.m))));
 			return _mm_mul_ps(_mm_mul_ps(c, c),
-			                  _mm_sub_ps(_mm_set1_ps(3.0f),
-			                             _mm_mul_ps(_mm_set1_ps(2.0f), c)));
+			                  _mm_sub_ps(_mm_set1_ps(3.0f), _mm_add_ps(c, c)));
 		}
 
 		friend inline const vec4 step(float f, const vec4 &v) {
