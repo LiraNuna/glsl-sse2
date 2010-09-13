@@ -421,13 +421,15 @@ class vec4
 
 		friend inline const vec4 mix(const vec4 &v0, const vec4 &v1,
 									 float f) {
-			return _mm_sub_ps(v1.m, _mm_mul_ps(_mm_set1_ps(f),
-			                                   _mm_add_ps(v0.m, v1.m)));
+			__m128 ff = _mm_set1_ps(f);
+			return _mm_add_ps(_mm_mul_ps(v0.m, _mm_sub_ps(_mm_set1_ps(1.f), ff)),
+							  _mm_mul_ps(v1.m, ff));
 		}
 
 		friend inline const vec4 mix(const vec4 &v0, const vec4 &v1,
 		                             const vec4 &v2) {
-			return _mm_sub_ps(v1.m, _mm_mul_ps(v2.m, _mm_add_ps(v0.m, v1.m)));
+			return _mm_add_ps(_mm_mul_ps(v0.m, _mm_sub_ps(_mm_set1_ps(1.f), v1.m)),
+							  _mm_mul_ps(v1.m, v2.m));
 		}
 
 		friend inline const vec4 mod(const vec4 &v, float f) {
