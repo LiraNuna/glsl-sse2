@@ -456,21 +456,19 @@ class vec4
 
 		friend inline const vec4 smoothstep(float f1, float f2,
 		                                    const vec4 &v) {
-			__m128 v0 = _mm_set1_ps(f1);
-			__m128 c = _mm_max_ps(_mm_setzero_ps(),
-			                      _mm_min_ps(_mm_set1_ps(1.0f),
-			                                 _mm_sub_ps(_mm_sub_ps(v.m, v0),
-											 _mm_sub_ps(_mm_set1_ps(f2), v0))));
+			__m128 ff1 = _mm_set1_ps(f1);
+			 __m128 c = _mm_max_ps(_mm_min_ps(_mm_div_ps(_mm_sub_ps(v.m, ff1),
+								   _mm_sub_ps(_mm_set1_ps(f2), ff1)),
+								   _mm_set1_ps(1.f)), _mm_setzero_ps());
 			return _mm_mul_ps(_mm_mul_ps(c, c),
 			                  _mm_sub_ps(_mm_set1_ps(3.0f), _mm_add_ps(c, c)));
 		}
 		
 		friend inline const vec4 smoothstep(const vec4 &v0,
 		                                    const vec4 &v1, const vec4 &v2) {
-			__m128 c = _mm_max_ps(_mm_setzero_ps(),
-			                      _mm_min_ps(_mm_set1_ps(1.0f),
-			                                 _mm_sub_ps(_mm_sub_ps(v2.m, v0.m),
-			                                            _mm_sub_ps(v1.m, v0.m))));
+			 __m128 c = _mm_max_ps(_mm_min_ps(_mm_div_ps(_mm_sub_ps(v2.m, v0.m),
+								   _mm_sub_ps(v1.m, v0.m)), _mm_set1_ps(1.f)),
+								   _mm_setzero_ps());
 			return _mm_mul_ps(_mm_mul_ps(c, c),
 			                  _mm_sub_ps(_mm_set1_ps(3.0f), _mm_add_ps(c, c)));
 		}
