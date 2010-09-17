@@ -201,15 +201,9 @@ class dvec4
 		}
 
 		friend inline const dvec4 ceil(const dvec4 &v) {
-			__m128d o = _mm_set1_pd(1.0);
-			__m128d nz = _mm_set1_pd(-0.0);
-			__m128d hg = _mm_set1_pd(4.5036e+15);
-			__m128d t1 = _mm_or_pd(_mm_and_pd(v.m1, nz), hg);
-			__m128d t2 = _mm_or_pd(_mm_and_pd(v.m2, nz), hg);
-			t1 = _mm_sub_pd(_mm_add_pd(v.m1, t1), t1);
-			t2 = _mm_sub_pd(_mm_add_pd(v.m2, t2), t2);
-			return dvec4(_mm_add_pd(t1, _mm_and_pd(_mm_cmpgt_pd(v.m1, t1), o)),
-						 _mm_add_pd(t2, _mm_and_pd(_mm_cmpgt_pd(v.m1, t2), o)));
+			__m128d h = _mm_set1_pd(0.5);
+			return dvec4(_mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_add_pd(v.m1, h))),
+						 _mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_add_pd(v.m2, h))));
 		}
 
 		friend inline const dvec4 clamp(const dvec4 &v, double d1, double d2) {
@@ -226,27 +220,17 @@ class dvec4
 		}
 
 		friend inline const dvec4 floor(const dvec4 &v) {
-			__m128d o = _mm_set1_pd(1.0);
-			__m128d nz = _mm_set1_pd(-0.0);
-			__m128d hg = _mm_set1_pd(4.5036e+15);
-			__m128d t1 = _mm_or_pd(_mm_and_pd(v.m1, nz), hg);
-			__m128d t2 = _mm_or_pd(_mm_and_pd(v.m2, nz), hg);
-			t1 = _mm_sub_pd(_mm_add_pd(v.m1, t1), t1);
-			t2 = _mm_sub_pd(_mm_add_pd(v.m2, t2), t2);
-			return dvec4(_mm_sub_pd(t1, _mm_and_pd(_mm_cmplt_pd(v.m1, t1), o)),
-						 _mm_sub_pd(t2, _mm_and_pd(_mm_cmplt_pd(v.m1, t2), o)));
+			__m128d h = _mm_set1_pd(0.5);
+			return dvec4(_mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_sub_pd(v.m1, h))),
+						 _mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_sub_pd(v.m2, h))));
 		}
 
 		friend inline const dvec4 fract(const dvec4 &v) {
-			__m128d o = _mm_set1_pd(1.0);
-			__m128d nz = _mm_set1_pd(-0.0);
-			__m128d hg = _mm_set1_pd(4.5036e+15);
-			__m128d t1 = _mm_or_pd(_mm_and_pd(v.m1, nz), hg);
-			__m128d t2 = _mm_or_pd(_mm_and_pd(v.m2, nz), hg);
-			t1 = _mm_sub_pd(_mm_add_pd(v.m1, t1), t1);
-			t2 = _mm_sub_pd(_mm_add_pd(v.m2, t2), t2);
-			return dvec4(_mm_sub_pd(v.m1, _mm_sub_pd(t1, _mm_and_pd(_mm_cmplt_pd(v.m1, t1), o))),
-						 _mm_sub_pd(v.m2, _mm_sub_pd(t2, _mm_and_pd(_mm_cmplt_pd(v.m2, t2), o))));
+			__m128d h = _mm_set1_pd(0.5);
+			return dvec4(_mm_sub_pd(v.m1, _mm_cvtepi32_pd(
+										  _mm_cvtpd_epi32(_mm_sub_pd(v.m1, h)))),
+						 _mm_sub_pd(v.m2, _mm_cvtepi32_pd(
+										  _mm_cvtpd_epi32(_mm_sub_pd(v.m2, h)))));
 		}
 
 		friend inline const dvec4 max(const dvec4 &v, double d) {
@@ -286,12 +270,21 @@ class dvec4
 						 _mm_mul_pd(v1.m2, v2.m2)));
 		}
 
-		friend inline const dvec4 mod(const dvec4 &v0, double d) {
-
+		friend inline const dvec4 mod(const dvec4 &v, double d) {
+			__m128d h = _mm_set1_pd(0.5);
+			__m128d dd = _mm_set1_pd(d);
+			return dvec4(_mm_sub_pd(v.m1, _mm_mul_pd(dd, _mm_cvtepi32_pd(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v.m1, dd), h))))),
+						 _mm_sub_pd(v.m2, _mm_mul_pd(dd, _mm_cvtepi32_pd(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v.m2, dd), h))))));
 		}
 
 		friend inline const dvec4 mod(const dvec4 &v0, const dvec4 &v1) {
-
+			__m128d h = _mm_set1_pd(0.5);
+			return dvec4(_mm_sub_pd(v0.m1, _mm_mul_pd(v1.m1, _mm_cvtepi32_pd(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v0.m1, v1.m1), h))))),
+						 _mm_sub_pd(v0.m2, _mm_mul_pd(v1.m2, _mm_cvtepi32_pd(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v0.m2, v1.m2), h))))));
 		}
 
 		friend inline const dvec4 sign(const dvec4 &v) {
@@ -352,11 +345,16 @@ class dvec4
 			return dvec4(_mm_and_pd(_mm_cmple_pd(v0.m1, v1.m1), o),
 						 _mm_and_pd(_mm_cmple_pd(v0.m2, v1.m2), o));
 		}
-/*
-		friend inline const dvec4 trunc(const dvec4 &v) {
 
+		friend inline const dvec4 trunc(const dvec4 &v) {
+			__m128d h = _mm_set1_pd(0.5);
+			__m128d nz = _mm_set1_pd(-0.0);
+			return dvec4(_mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_sub_pd(v.m1,
+										 _mm_or_pd(_mm_and_pd(v.m1, nz),  h)))),
+						 _mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_sub_pd(v.m2,
+										 _mm_or_pd(_mm_and_pd(v.m2, nz),  h)))));
 		}
-*/
+
 		// ----------------------------------------------------------------- //
 
 		friend inline bool operator == (const dvec4 &v0, const dvec4 &v1) {
