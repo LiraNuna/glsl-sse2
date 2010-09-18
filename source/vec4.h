@@ -492,7 +492,6 @@ class vec4
 			__m128 l = _mm_mul_ps(v0.m, v1.m);
 			l = _mm_add_ps(l, _mm_shufd(l, 0x4E));
 			return _mm_cvtss_f32(_mm_add_ss(l, _mm_shufd(l, 0x11)));
-
 		}
 
 		friend inline const vec4 faceforward(const vec4 &v0,
@@ -527,14 +526,13 @@ class vec4
 
 		friend inline const vec4 refract(const vec4 &v0, const vec4 &v1,
 										 float f) {
+			__m128 o = _mm_set1_ps(1.0f);
+			__m128 e = _mm_set1_ps(f);
 			__m128 d = _mm_mul_ps(v1.m, v0.m);
 			d = _mm_add_ps(d, _mm_shufd(d, 0x4E));
 			d = _mm_add_ps(d, _mm_shufd(d, 0x11));
-			__m128 e = _mm_set1_ps(f);
-			__m128 k = _mm_sub_ps(_mm_set1_ps(1.0f),
-			                      _mm_mul_ps(_mm_mul_ps(e, e),
-			                                 _mm_sub_ps(_mm_set1_ps(1.0f),
-			                                            _mm_mul_ps(d, d))));
+			__m128 k = _mm_sub_ps(o, _mm_mul_ps(_mm_mul_ps(e, e),
+									 _mm_sub_ps(o, _mm_mul_ps(d, d))));
 			return _mm_and_ps(_mm_cmpnlt_ps(k, _mm_setzero_ps()),
 			                  _mm_mul_ps(_mm_mul_ps(e, _mm_sub_ps(v0.m,
 			                  _mm_mul_ps(_mm_mul_ps(e, d), _mm_sqrt_ps(k)))),
