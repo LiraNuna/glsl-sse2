@@ -357,6 +357,92 @@ class dvec4
 
 		// ----------------------------------------------------------------- //
 
+		friend inline double distance(const dvec4 &v0, const dvec4 &v1) {
+			__m128d dd1 = _mm_sub_pd(v0.m1, v1.m1);
+			__m128d dd2 = _mm_sub_pd(v0.m2, v1.m2);
+			__m128d ll1 = _mm_mul_pd(dd1, dd1);
+			__m128d ll2 = _mm_mul_pd(dd2, dd2);
+			return _mm_cvtsd_f64(_mm_sqrt_pd(_mm_add_pd(
+				_mm_add_pd(ll1, ll2),
+				_mm_add_pd(_mm_shuffle_pd(ll1, ll1, 0x01),
+						   _mm_shuffle_pd(ll2, ll2, 0x01)))));
+		}
+
+		friend inline double dot(const dvec4 &v0, const dvec4 &v1) {
+			__m128d ll1 = _mm_mul_pd(v0.m1, v1.m1);
+			__m128d ll2 = _mm_mul_pd(v0.m2, v1.m2);
+			return _mm_cvtsd_f64(_mm_add_pd(
+				_mm_add_pd(ll1, ll2),
+				_mm_add_pd(_mm_shuffle_pd(ll1, ll1, 0x01),
+						   _mm_shuffle_pd(ll2, ll2, 0x01))));
+		}
+
+		friend inline const dvec4 faceforward(const dvec4 &v0,
+		                                      const dvec4 &v1, const dvec4 &v2) {
+			__m128d z = _mm_setzero_pd();
+			__m128d nz = _mm_set1_pd(-0.0);
+			__m128d ll1 = _mm_mul_pd(v2.m1, v1.m1);
+			__m128d ll2 = _mm_mul_pd(v2.m2, v1.m2);
+			__m128d dot = _mm_add_pd(
+						  _mm_add_pd(ll1, ll2),
+						  _mm_add_pd(_mm_shuffle_pd(ll1, ll1, 0x01),
+									 _mm_shuffle_pd(ll2, ll2, 0x01)));
+			return dvec4(_mm_xor_pd(_mm_and_pd(_mm_cmpnlt_pd(dot, z), nz), v0.m1),
+						 _mm_xor_pd(_mm_and_pd(_mm_cmpnlt_pd(dot, z), nz), v0.m2));
+		}
+
+		friend inline double length(const dvec4 &v) {
+			__m128d ll1 = _mm_mul_pd(v.m1, v.m1);
+			__m128d ll2 = _mm_mul_pd(v.m2, v.m2);
+			return _mm_cvtsd_f64(_mm_sqrt_pd(_mm_add_pd(
+				_mm_add_pd(ll1, ll2),
+				_mm_add_pd(_mm_shuffle_pd(ll1, ll1, 0x01),
+						   _mm_shuffle_pd(ll2, ll2, 0x01)))));
+		}
+
+		friend inline const dvec4 normalize(const dvec4 &v) {
+			__m128d ll1 = _mm_mul_pd(v.m1, v.m1);
+			__m128d ll2 = _mm_mul_pd(v.m2, v.m2);
+			__m128d len = _mm_sqrt_pd(_mm_add_pd(
+									  _mm_add_pd(ll1, ll2),
+									  _mm_add_pd(_mm_shuffle_pd(ll1, ll1, 0x01),
+												 _mm_shuffle_pd(ll2, ll2, 0x01))));
+			return dvec4(_mm_div_pd(v.m1, len), _mm_div_pd(v.m2, len));
+		}
+
+		friend inline const dvec4 reflect(const dvec4 &v0, const dvec4 &v1) {
+			__m128d ll1 = _mm_mul_pd(v0.m1, v1.m1);
+			__m128d ll2 = _mm_mul_pd(v0.m2, v1.m2);
+			__m128d res = _mm_add_pd(_mm_add_pd(ll1, ll2),
+									 _mm_add_pd(_mm_shuffle_pd(ll1, ll1, 0x01),
+												_mm_shuffle_pd(ll2, ll2, 0x01)));
+			res = _mm_add_pd(res, res);
+			return dvec4(_mm_sub_pd(v0.m1, _mm_mul_pd(res, v1.m1)),
+						 _mm_sub_pd(v0.m2, _mm_mul_pd(res, v1.m2)));
+		}
+
+		friend inline const dvec4 refract(const dvec4 &v0, const dvec4 &v1,
+										  double d) {
+			__m128d o = _mm_set1_pd(1.0);
+			__m128d z = _mm_set1_pd(0.0);
+			__m128d e = _mm_set1_pd(d);
+			__m128d ll1 = _mm_mul_pd(v1.m1, v0.m1);
+			__m128d ll2 = _mm_mul_pd(v1.m2, v0.m2);
+			__m128d dot = _mm_add_pd(_mm_add_pd(ll1, ll2),
+									 _mm_add_pd(_mm_shuffle_pd(ll1, ll1, 0x01),
+												_mm_shuffle_pd(ll2, ll2, 0x01)));
+			__m128d k = _mm_sub_pd(o, _mm_mul_pd(_mm_mul_pd(e, e), _mm_sub_pd(o,
+												 _mm_mul_pd(dot, dot))));
+			return dvec4(_mm_and_pd(_mm_cmpnlt_pd(k, z), _mm_mul_pd(
+									_mm_mul_pd(e, _mm_sub_pd(v0.m1, _mm_mul_pd(
+									_mm_mul_pd(e, dot), _mm_sqrt_pd(k)))), v1.m1)),
+						 _mm_and_pd(_mm_cmpnlt_pd(k, z), _mm_mul_pd(
+									_mm_mul_pd(e, _mm_sub_pd(v0.m2, _mm_mul_pd(
+									_mm_mul_pd(e, dot), _mm_sqrt_pd(k)))), v1.m2)));
+		}
+
+		// ----------------------------------------------------------------- //
+
 		friend inline bool operator == (const dvec4 &v0, const dvec4 &v1) {
 			return _mm_movemask_ps((_mm_shuffle_ps(
 				_mm_castpd_ps(_mm_cmpeq_pd(v0.m1, v1.m1)),
