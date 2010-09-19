@@ -104,7 +104,7 @@ class vec4
 
 			public:
 				inline operator const vec4 () const {
-					return _mm_shuffle_epi32(v.mi, mask);
+					return _mm_shufd(v.m, mask);
 				}
 
 					// Swizzle from vec4
@@ -137,7 +137,7 @@ class vec4
 				template<unsigned other_mask>
 				inline _swzl_rw& operator = (const _swzl_rw<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
-					v.mi = _mm_shuffle_epi32(s.v.mi, merged::MASK);
+					v.m = _mm_shufd(s.v.m, merged::MASK);
 					return *this;
 				}
 
@@ -201,7 +201,7 @@ class vec4
 		inline vec4(const float* fv) {
 			m = _mm_loadu_ps(fv);
 		}
-			
+
 			// Copy constructor
 		inline vec4(const vec4 &v) {
 			m = v.m;
@@ -211,12 +211,7 @@ class vec4
 		inline vec4(const __m128 &_m) {
 			m = _m;
 		}
-		
-			// SSE2 compatible constructor
-		inline vec4(const __m128i &_mi) {
-			mi = _mi;
-		}		
-		
+
 		// ----------------------------------------------------------------- //
 
 			// Read-write swizzle
@@ -230,7 +225,7 @@ class vec4
 		inline _swzl_ro<mask> shuffle4_rw() const {
 			return _swzl_ro<mask>(*this);
 		}
-		
+
 			// Read-only swizzle
 		template<unsigned mask>
 		inline _swzl_ro<mask> shuffle4_ro() const {
@@ -243,7 +238,7 @@ class vec4
 		inline float& operator[](int index) {
 			return ((float*)this)[index];
 		}
-		
+
 			// Read direct access operator
 		inline const float& operator[](int index) const {
 			return ((const float*)this)[index];
@@ -253,7 +248,7 @@ class vec4
 		inline operator float* () {
 			return (float*)this;
 		}
-		
+
 			// Const cast operator
 		inline operator const float* () const {
 			return (const float*)this;
@@ -265,7 +260,7 @@ class vec4
 			v.m = _mm_add_ps(v.m, _mm_set1_ps(f));
 			return v;
 		}
-		
+
 		friend inline vec4& operator += (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_add_ps(v0.m, v1.m);
 			return v0;
@@ -275,7 +270,7 @@ class vec4
 			v.m = _mm_sub_ps(v.m, _mm_set1_ps(f));
 			return v;
 		}
-		
+
 		friend inline vec4& operator -= (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_sub_ps(v0.m, v1.m);
 			return v0;
@@ -295,7 +290,7 @@ class vec4
 			v.m = _mm_div_ps(v.m, _mm_set1_ps(f));
 			return v;
 		}
-		
+
 		friend inline vec4& operator /= (vec4 &v0, const vec4 &v1) {
 			v0.m = _mm_div_ps(v0.m, v1.m);
 			return v0;
@@ -310,7 +305,7 @@ class vec4
 		friend inline const vec4 operator + (const vec4 &v, float f) {
 			return _mm_add_ps(v.m, _mm_set1_ps(f));
 		}
-		
+
 		friend inline const vec4 operator + (const vec4 &v0, const vec4 &v1) {
 			return _mm_add_ps(v0.m, v1.m);
 		}
@@ -356,7 +351,7 @@ class vec4
 		}
 
 		// ----------------------------------------------------------------- //
-		
+
 		friend inline const vec4 sqrt(const vec4 &v) {
 			return _mm_sqrt_ps(v.m);
 		}
@@ -399,7 +394,7 @@ class vec4
 		friend inline const vec4 max(const vec4 &v, float f) {
 			return _mm_max_ps(v.m, _mm_set1_ps(f));
 		}
-		
+
 		friend inline const vec4 max(const vec4 &v0, const vec4 &v1) {
 			return _mm_max_ps(v0.m, v1.m);
 		}
@@ -407,7 +402,7 @@ class vec4
 		friend inline const vec4 min(const vec4 &v, float f) {
 			return _mm_min_ps(v.m, _mm_set1_ps(f));
 		}
-		
+
 		friend inline const vec4 min(const vec4 &v0, const vec4 &v1) {
 			return _mm_min_ps(v0.m, v1.m);
 		}
@@ -453,7 +448,7 @@ class vec4
 			return _mm_mul_ps(_mm_mul_ps(c, c),
 			                  _mm_sub_ps(_mm_set1_ps(3.0f), _mm_add_ps(c, c)));
 		}
-		
+
 		friend inline const vec4 smoothstep(const vec4 &v0,
 		                                    const vec4 &v1, const vec4 &v2) {
 			 __m128 c = _mm_max_ps(_mm_min_ps(_mm_div_ps(_mm_sub_ps(v2.m, v0.m),
@@ -548,9 +543,9 @@ class vec4
 		friend inline bool operator != (const vec4 &v0, const vec4 &v1) {
 			return (_mm_movemask_ps(_mm_cmpneq_ps(v0.m, v1.m)) != 0x0);
 		}
-		
+
 		// ----------------------------------------------------------------- //
-		
+
 		union {
 				// Vertex / Vector 
 			struct {
@@ -564,15 +559,14 @@ class vec4
 			struct {
 				float s, t, p, q;
 			};
-		
+
 				// SSE register
 			__m128	m;
-			__m128i	mi;
 		};
-	
+
 		// Avoid pollution
 	#undef _mm_shufd
-};	
+};
 
 #include "swizzle.h"
 
