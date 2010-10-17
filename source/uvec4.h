@@ -274,17 +274,17 @@ class uvec4
 
 		friend inline uvec4& operator *= (uvec4 &v, uint32_t i) {
 			__m128i ii = _mm_set1_epi32(i);
-		    v.m = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm_mul_epu32(v.m, ii)),
+			v.m = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm_mul_epu32(v.m, ii)),
 												  _mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(v.m, 4),
-																			     _mm_srli_si128(ii, 4))), 0x88));
+																				 _mm_srli_si128(ii, 4))), 0x88));
 			return v;
 		}
 
 		friend inline uvec4& operator *= (uvec4 &v0, const uvec4 &v1) {
-		    v0.m = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm_mul_epu32(v0.m, v1.m)),
+			v0.m = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm_mul_epu32(v0.m, v1.m)),
 												   _mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(v0.m, 4),
-																			      _mm_srli_si128(v1.m, 4))), 0x88));
-		    return v0;
+																				  _mm_srli_si128(v1.m, 4))), 0x88));
+			return v0;
 		}
 /*
 		friend inline uvec4& operator /= (uvec4 &v, float f) {
@@ -327,7 +327,7 @@ class uvec4
 
 		friend inline const uvec4 operator * (uint32_t i, const uvec4 &v) {
 			__m128i ii = _mm_set1_epi32(i);
-		    return _mm_castps_si128(_mm_shuffle_ps(
+			return _mm_castps_si128(_mm_shuffle_ps(
 									_mm_castsi128_ps(_mm_mul_epu32(ii, v.m)),
 									_mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(ii, 4),
 													 _mm_srli_si128(v.m, 4))), 0x88));
@@ -335,14 +335,14 @@ class uvec4
 
 		friend inline const uvec4 operator * (const uvec4 &v, uint32_t i) {
 			__m128i ii = _mm_set1_epi32(i);
-		    return _mm_castps_si128(_mm_shuffle_ps(
+			return _mm_castps_si128(_mm_shuffle_ps(
 									_mm_castsi128_ps(_mm_mul_epu32(v.m, ii)),
 									_mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(v.m, 4),
 													 _mm_srli_si128(ii, 4))), 0x88));
 		}
 
 		friend inline const uvec4 operator * (const uvec4 &v0, const uvec4 &v1) {
-		    return _mm_castps_si128(_mm_shuffle_ps(
+			return _mm_castps_si128(_mm_shuffle_ps(
 									_mm_castsi128_ps(_mm_mul_epu32(v0.m, v1.m)),
 									_mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(v0.m, 4),
 													 _mm_srli_si128(v1.m, 4))), 0x88));

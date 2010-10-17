@@ -508,20 +508,20 @@ class dvec4
 			__m128d z = _mm_setzero_pd();
 			__m128d nz = _mm_set1_pd(-0.0);
 			return dvec4(_mm_and_pd(_mm_or_pd(_mm_and_pd(v.m1, nz), o),
-								    _mm_cmpneq_pd(v.m1, z)),
+									_mm_cmpneq_pd(v.m1, z)),
 						 _mm_and_pd(_mm_or_pd(_mm_and_pd(v.m2, nz), o),
 									_mm_cmpneq_pd(v.m2, z)));
 		}
 
 		friend inline const dvec4 smoothstep(double d1, double d2,
-		                                     const dvec4 &v) {
+											 const dvec4 &v) {
 			__m128d z = _mm_setzero_pd();
 			__m128d o = _mm_set1_pd(1.0);
 			__m128d t = _mm_set1_pd(3.0);
 			__m128d dd1 = _mm_set1_pd(d1);
 			__m128d dd2 = _mm_set1_pd(d2);
 			__m128d r1 = _mm_max_pd(_mm_min_pd(_mm_div_pd(
-								    _mm_sub_pd(v.m1, dd1),
+									_mm_sub_pd(v.m1, dd1),
 									_mm_sub_pd(dd2, dd1)), o), z);
 			__m128d r2 = _mm_max_pd(_mm_min_pd(_mm_div_pd(
 									_mm_sub_pd(v.m2, dd1),
@@ -533,12 +533,12 @@ class dvec4
 		}
 
 		friend inline const dvec4 smoothstep(const dvec4 &v0,
-		                                     const dvec4 &v1, const dvec4 &v2) {
+											 const dvec4 &v1, const dvec4 &v2) {
 			__m128d z = _mm_setzero_pd();
 			__m128d o = _mm_set1_pd(1.0);
 			__m128d t = _mm_set1_pd(3.0);
 			__m128d r1 = _mm_max_pd(_mm_min_pd(_mm_div_pd(
-								    _mm_sub_pd(v2.m1, v0.m1),
+									_mm_sub_pd(v2.m1, v0.m1),
 									_mm_sub_pd(v1.m1, v0.m1)), o), z);
 			__m128d r2 = _mm_max_pd(_mm_min_pd(_mm_div_pd(
 									_mm_sub_pd(v2.m2, v0.m2),
@@ -594,7 +594,7 @@ class dvec4
 		}
 
 		friend inline const dvec4 faceforward(const dvec4 &v0,
-		                                      const dvec4 &v1, const dvec4 &v2) {
+											  const dvec4 &v1, const dvec4 &v2) {
 			__m128d z = _mm_setzero_pd();
 			__m128d nz = _mm_set1_pd(-0.0);
 			__m128d ll1 = _mm_mul_pd(v2.m1, v1.m1);
