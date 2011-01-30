@@ -32,6 +32,12 @@ typedef union bvec4
 
 		// ----------------------------------------------------------------- //
 
+		friend inline const bvec4 isnan(const vec4 &v);
+
+		friend inline const bvec4 isinf(const vec4 &v);
+
+		// ----------------------------------------------------------------- //
+
 		friend inline bool any(const bvec4 &b);
 		
 		friend inline bool all(const bvec4 &b);
@@ -102,6 +108,18 @@ inline const bvec4 lessThan(const vec4 &v0, const vec4 &v1) {
 
 inline const bvec4 lessThanEqual(const vec4 &v0, const vec4 &v1) {
 	return bvec4(_mm_movemask_ps(_mm_cmple_ps(v0.m, v1.m)));
+}
+
+// ------------------------------------------------------------------------- //
+
+inline const bvec4 isnan(const vec4 &v) {
+	return bvec4(_mm_movemask_ps(_mm_cmpneq_ps(v.m, v.m)));
+}
+
+inline const bvec4 isinf(const vec4 &v) {
+	return bvec4(_mm_movemask_ps(_mm_cmpeq_ps(
+				 _mm_andnot_ps(_mm_set1_ps(-0.f), v.m),
+				 _mm_castsi128_ps(_mm_set1_epi32(0x7F800000)))));
 }
 
 // ------------------------------------------------------------------------- //
