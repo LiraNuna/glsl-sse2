@@ -434,10 +434,8 @@ class vec4
 		}
 
 		friend inline const vec4 modf(const vec4 &v0, vec4 &v1) {
-			__m128 s = _mm_and_ps(_mm_set1_ps(-0.f), v0.m);
-			v1.m = _mm_or_ps(_mm_cvtepi32_ps(_mm_cvtps_epi32(
-							 _mm_sub_ps(v0.m, _mm_or_ps(s,
-											  _mm_set1_ps(0.5f))))), s);
+			v1.m = _mm_or_ps(_mm_cvtepi32_ps(_mm_cvttps_epi32(v0.m)),
+							 _mm_and_ps(_mm_set1_ps(-0.f), v0.m));
 			return _mm_sub_ps(v0.m, v1.m);
 		}
 

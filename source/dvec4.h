@@ -504,14 +504,11 @@ class dvec4
 		}
 
 		friend inline const dvec4 modf(const dvec4 &v0, dvec4 &v1) {
-			__m128d h  = _mm_set1_pd(0.5);
 			__m128d nz = _mm_set1_pd(-0.0);
-			__m128d s1 = _mm_and_pd(nz, v0.m1);
-			__m128d s2 = _mm_and_pd(nz, v0.m2);
-			v1.m1 = _mm_or_pd(_mm_cvtepi32_pd(_mm_cvtpd_epi32(
-							  _mm_sub_pd(v0.m1, _mm_or_pd(s1, h)))), s1);
-			v1.m2 = _mm_or_pd(_mm_cvtepi32_pd(_mm_cvtpd_epi32(
-							  _mm_sub_pd(v0.m2, _mm_or_pd(s2, h)))), s2);
+			v1.m1 = _mm_or_pd(_mm_cvtepi32_pd(_mm_cvttpd_epi32(v0.m1)),
+							  _mm_and_pd(nz, v0.m1));
+			v1.m2 = _mm_or_pd(_mm_cvtepi32_pd(_mm_cvttpd_epi32(v0.m2)),
+							  _mm_and_pd(nz, v0.m2));
 			return dvec4(_mm_sub_pd(v0.m1, v1.m1),
 						 _mm_sub_pd(v0.m2, v1.m2));
 		}
