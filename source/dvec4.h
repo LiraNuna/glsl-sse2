@@ -437,16 +437,18 @@ class dvec4
 
 		friend inline const dvec4 floor(const dvec4 &v) {
 			__m128d h = _mm_set1_pd(0.5);
-			return dvec4(_mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_sub_pd(v.m1, h))),
-						 _mm_cvtepi32_pd(_mm_cvtpd_epi32(_mm_sub_pd(v.m2, h))));
+			return dvec4(_mm_cvtepi32_pd(_mm_srai_epi32(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_add_pd(v.m1, v.m1), h)), 1)),
+						 _mm_cvtepi32_pd(_mm_srai_epi32(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_add_pd(v.m2, v.m2), h)), 1)));
 		}
 
 		friend inline const dvec4 fract(const dvec4 &v) {
 			__m128d h = _mm_set1_pd(0.5);
-			return dvec4(_mm_sub_pd(v.m1, _mm_cvtepi32_pd(
-										  _mm_cvtpd_epi32(_mm_sub_pd(v.m1, h)))),
-						 _mm_sub_pd(v.m2, _mm_cvtepi32_pd(
-										  _mm_cvtpd_epi32(_mm_sub_pd(v.m2, h)))));
+			return dvec4(_mm_sub_pd(v.m1, _mm_cvtepi32_pd(_mm_srai_epi32(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_add_pd(v.m1, v.m1), h)), 1))),
+						 _mm_sub_pd(v.m2, _mm_cvtepi32_pd(_mm_srai_epi32(
+						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_add_pd(v.m2, v.m2), h)), 1))));
 		}
 
 		friend inline const dvec4 max(const dvec4 &v, double d) {
@@ -489,18 +491,26 @@ class dvec4
 		friend inline const dvec4 mod(const dvec4 &v, double d) {
 			__m128d h = _mm_set1_pd(0.5);
 			__m128d dd = _mm_set1_pd(d);
+			__m128d d1 = _mm_div_pd(v.m1, dd);
+			__m128d d2 = _mm_div_pd(v.m2, dd);
 			return dvec4(_mm_sub_pd(v.m1, _mm_mul_pd(dd, _mm_cvtepi32_pd(
-						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v.m1, dd), h))))),
+										   _mm_srai_epi32(_mm_cvtpd_epi32(_mm_sub_pd(
+										   _mm_add_pd(d1, d1), h)), 1)))),
 						 _mm_sub_pd(v.m2, _mm_mul_pd(dd, _mm_cvtepi32_pd(
-						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v.m2, dd), h))))));
+										   _mm_srai_epi32(_mm_cvtpd_epi32(_mm_sub_pd(
+										   _mm_add_pd(d2, d2), h)), 1)))));
 		}
 
 		friend inline const dvec4 mod(const dvec4 &v0, const dvec4 &v1) {
 			__m128d h = _mm_set1_pd(0.5);
+			__m128d d1 = _mm_div_pd(v0.m1, v1.m1);
+			__m128d d2 = _mm_div_pd(v0.m2, v1.m2);
 			return dvec4(_mm_sub_pd(v0.m1, _mm_mul_pd(v1.m1, _mm_cvtepi32_pd(
-						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v0.m1, v1.m1), h))))),
+										   _mm_srai_epi32(_mm_cvtpd_epi32(_mm_sub_pd(
+										   _mm_add_pd(d1, d1), h)), 1)))),
 						 _mm_sub_pd(v0.m2, _mm_mul_pd(v1.m2, _mm_cvtepi32_pd(
-						 _mm_cvtpd_epi32(_mm_sub_pd(_mm_div_pd(v0.m2, v1.m2), h))))));
+										   _mm_srai_epi32(_mm_cvtpd_epi32(_mm_sub_pd(
+										   _mm_add_pd(d2, d2), h)), 1)))));
 		}
 
 		friend inline const dvec4 modf(const dvec4 &v0, dvec4 &v1) {
