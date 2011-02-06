@@ -488,9 +488,7 @@ class vec4
 		}
 
 		friend inline const vec4 trunc(const vec4 &v) {
-			return _mm_cvtepi32_ps(_mm_cvtps_epi32(_mm_sub_ps(v.m,
-								   _mm_or_ps(_mm_and_ps(v.m, _mm_set1_ps(-0.f)),
-															 _mm_set1_ps(0.5f)))));
+			return _mm_cvtepi32_ps(_mm_cvttps_epi32(v.m));
 		}
 
 		// ----------------------------------------------------------------- //
