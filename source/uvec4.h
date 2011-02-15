@@ -252,8 +252,8 @@ class uvec4
 
 		// ----------------------------------------------------------------- //
 
-		friend inline uvec4& operator += (uvec4 &v, uint32_t i) {
-			v.m = _mm_add_epi32(v.m, _mm_set1_epi32(i));
+		friend inline uvec4& operator += (uvec4 &v, uint32_t u) {
+			v.m = _mm_add_epi32(v.m, _mm_set1_epi32(u));
 			return v;
 		}
 
@@ -262,8 +262,8 @@ class uvec4
 			return v0;
 		}
 
-		friend inline uvec4& operator -= (uvec4 &v, uint32_t i) {
-			v.m = _mm_sub_epi32(v.m, _mm_set1_epi32(i));
+		friend inline uvec4& operator -= (uvec4 &v, uint32_t u) {
+			v.m = _mm_sub_epi32(v.m, _mm_set1_epi32(u));
 			return v;
 		}
 
@@ -272,11 +272,11 @@ class uvec4
 			return v0;
 		}
 
-		friend inline uvec4& operator *= (uvec4 &v, uint32_t i) {
-			__m128i ii = _mm_set1_epi32(i);
-			v.m = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm_mul_epu32(v.m, ii)),
+		friend inline uvec4& operator *= (uvec4 &v, uint32_t u) {
+			__m128i uu = _mm_set1_epi32(u);
+			v.m = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm_mul_epu32(v.m, uu)),
 												  _mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(v.m, 4),
-																				 _mm_srli_si128(ii, 4))), 0x88));
+																				 _mm_srli_si128(uu, 4))), 0x88));
 			return v;
 		}
 
@@ -313,32 +313,32 @@ class uvec4
 			return _mm_sub_epi32(_mm_setzero_si128(), v.m);
 		}
 
-		friend inline const uvec4 operator - (uint32_t i, const uvec4 &v) {
-			return _mm_sub_epi32(_mm_set1_epi32(i), v.m);
+		friend inline const uvec4 operator - (uint32_t u, const uvec4 &v) {
+			return _mm_sub_epi32(_mm_set1_epi32(u), v.m);
 		}
 
-		friend inline const uvec4 operator - (const uvec4 &v, uint32_t i) {
-			return _mm_sub_epi32(v.m, _mm_set1_epi32(i));
+		friend inline const uvec4 operator - (const uvec4 &v, uint32_t u) {
+			return _mm_sub_epi32(v.m, _mm_set1_epi32(u));
 		}
 
 		friend inline const uvec4 operator - (const uvec4 &v0, const uvec4 &v1) {
 			return _mm_sub_epi32(v0.m, v1.m);
 		}
 
-		friend inline const uvec4 operator * (uint32_t i, const uvec4 &v) {
-			__m128i ii = _mm_set1_epi32(i);
+		friend inline const uvec4 operator * (uint32_t u, const uvec4 &v) {
+			__m128i uu = _mm_set1_epi32(u);
 			return _mm_castps_si128(_mm_shuffle_ps(
-									_mm_castsi128_ps(_mm_mul_epu32(ii, v.m)),
-									_mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(ii, 4),
+									_mm_castsi128_ps(_mm_mul_epu32(uu, v.m)),
+									_mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(uu, 4),
 													 _mm_srli_si128(v.m, 4))), 0x88));
 		}
 
-		friend inline const uvec4 operator * (const uvec4 &v, uint32_t i) {
-			__m128i ii = _mm_set1_epi32(i);
+		friend inline const uvec4 operator * (const uvec4 &v, uint32_t u) {
+			__m128i uu = _mm_set1_epi32(u);
 			return _mm_castps_si128(_mm_shuffle_ps(
-									_mm_castsi128_ps(_mm_mul_epu32(v.m, ii)),
+									_mm_castsi128_ps(_mm_mul_epu32(v.m, uu)),
 									_mm_castsi128_ps(_mm_mul_epu32(_mm_srli_si128(v.m, 4),
-													 _mm_srli_si128(ii, 4))), 0x88));
+													 _mm_srli_si128(uu, 4))), 0x88));
 		}
 
 		friend inline const uvec4 operator * (const uvec4 &v0, const uvec4 &v1) {
@@ -348,11 +348,11 @@ class uvec4
 													 _mm_srli_si128(v1.m, 4))), 0x88));
 		}
 /*
-		friend inline const uvec4 operator / (float f, const uvec4 &v) {
+		friend inline const uvec4 operator / (uint32_t u, const uvec4 &v) {
 			???
 		}
 
-		friend inline const uvec4 operator / (const uvec4 &v, float f) {
+		friend inline const uvec4 operator / (const uvec4 &v, uint32_t u) {
 			???
 		}
 
@@ -362,8 +362,8 @@ class uvec4
 */
 		// ----------------------------------------------------------------- //
 
-		friend inline const uvec4 clamp(const uvec4 &v, float f1, float f2) {
-			return max(min(v, f2), f1);
+		friend inline const uvec4 clamp(const uvec4 &v, uint32_t u1, uint32_t u2) {
+			return max(min(v, u2), u1);
 		}
 
 		friend inline const uvec4 clamp(const uvec4 &v0,
@@ -371,11 +371,11 @@ class uvec4
 			return max(v1, min(v2, v0));
 		}
 
-		friend inline const uvec4 max(const uvec4 &v, uint32_t i) {
-			__m128i ii = _mm_set1_epi32(i);
+		friend inline const uvec4 max(const uvec4 &v, uint32_t u) {
+			__m128i uu = _mm_set1_epi32(u);
 			__m128i m = _mm_set1_epi32(0x80000000);
-			__m128i mm = _mm_cmplt_epi32(_mm_xor_si128(v.m, m), _mm_xor_si128(ii, m));
-	        return _mm_or_si128(_mm_andnot_si128(mm, v.m), _mm_and_si128(ii, mm));
+			__m128i mm = _mm_cmplt_epi32(_mm_xor_si128(v.m, m), _mm_xor_si128(uu, m));
+	        return _mm_or_si128(_mm_andnot_si128(mm, v.m), _mm_and_si128(uu, mm));
 		}
 
 		friend inline const uvec4 max(const uvec4 &v0, const uvec4 &v1) {
@@ -384,11 +384,11 @@ class uvec4
 	        return _mm_or_si128(_mm_andnot_si128(mm, v0.m), _mm_and_si128(v1.m, mm));
 		}
 
-		friend inline const uvec4 min(const uvec4 &v, uint32_t i) {
-			__m128i ii = _mm_set1_epi32(i);
+		friend inline const uvec4 min(const uvec4 &v, uint32_t u) {
+			__m128i uu = _mm_set1_epi32(u);
 			__m128i m = _mm_set1_epi32(0x80000000);
-			__m128i mm = _mm_cmpgt_epi32(_mm_xor_si128(v.m, m), _mm_xor_si128(ii, m));
-	        return _mm_or_si128(_mm_andnot_si128(mm, v.m), _mm_and_si128(ii, mm));
+			__m128i mm = _mm_cmpgt_epi32(_mm_xor_si128(v.m, m), _mm_xor_si128(uu, m));
+	        return _mm_or_si128(_mm_andnot_si128(mm, v.m), _mm_and_si128(uu, mm));
 		}
 
 		friend inline const uvec4 min(const uvec4 &v0, const uvec4 &v1) {
