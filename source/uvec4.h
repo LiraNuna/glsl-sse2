@@ -309,10 +309,6 @@ class uvec4
 			return _mm_add_epi32(v0.m, v1.m);
 		}
 
-		friend inline const uvec4 operator - (const uvec4 &v) {
-			return _mm_sub_epi32(_mm_setzero_si128(), v.m);
-		}
-
 		friend inline const uvec4 operator - (uint32_t u, const uvec4 &v) {
 			return _mm_sub_epi32(_mm_set1_epi32(u), v.m);
 		}
