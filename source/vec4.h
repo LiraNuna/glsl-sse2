@@ -58,6 +58,10 @@ class vec4
 					return _mm_shufd(v.m, mask);
 				}
 
+				inline float operator[](int index) const {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
 					// Swizzle of the swizzle, read only const
 				template<unsigned other_mask>
 				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro() const {
@@ -107,6 +111,10 @@ class vec4
 					return _mm_shufd(v.m, mask);
 				}
 
+				inline float& operator[](int index) {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
 					// Swizzle from vec4
 				inline _swzl_rw& operator = (const vec4 &r) {
 					v.m = _mm_shufd(r.m, _mask_reverser<mask>::MASK);
@@ -154,6 +162,42 @@ class vec4
 					typedef _mask_merger<mask, other_mask> merged;
 					return _swzl_rw<merged::MASK>(v);
 				}
+
+				// ----------------------------------------------------------------- //
+
+				inline vec4& operator += (float s) {
+					return v += s;
+				}
+
+				inline vec4& operator += (const vec4 &v0) {
+					return v = v.shuffle4_ro<mask>() + v0;
+				}
+
+				inline vec4& operator -= (float s) {
+					return v -= s;
+				}
+
+				inline vec4& operator -= (const vec4 &v0) {
+					return v = v.shuffle4_ro<mask>() - v0;
+				}
+
+				inline vec4& operator *= (float s) {
+					return v *= s;
+				}
+
+				inline vec4& operator *= (const vec4 &v0) {
+					return v = v.shuffle4_ro<mask>() * v0;
+				}
+
+				inline vec4& operator /= (float s) {
+					return v /= s;
+				}
+
+				inline vec4& operator /= (const vec4 &v0) {
+					return v = v.shuffle4_ro<mask>() / v0;
+				}
+
+				// ----------------------------------------------------------------- //
 
 				float &x, &y, &z, &w;
 				float &r, &g, &b, &a;

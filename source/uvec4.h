@@ -54,6 +54,10 @@ class uvec4
 					return _mm_shuffle_epi32(v.m, mask);
 				}
 
+				inline uint32_t operator[](int index) const {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
 					// Swizzle of the swizzle, read only const
 				template<unsigned other_mask>
 				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro() const {
@@ -103,6 +107,10 @@ class uvec4
 					return _mm_shuffle_epi32(v.m, mask);
 				}
 
+				inline uint32_t& operator[](int index) const {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
 					// Swizzle from uvec4
 				inline _swzl_rw& operator = (const uvec4 &r) {
 					v.m = _mm_shuffle_epi32(r.m, _mask_reverser<mask>::MASK);
@@ -150,6 +158,42 @@ class uvec4
 					typedef _mask_merger<mask, other_mask> merged;
 					return _swzl_rw<merged::MASK>(v);
 				}
+
+				// ----------------------------------------------------------------- //
+
+				inline uvec4& operator += (float s) {
+					return v += s;
+				}
+
+				inline uvec4& operator += (const uvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() + v0;
+				}
+
+				inline uvec4& operator -= (float s) {
+					return v -= s;
+				}
+
+				inline uvec4& operator -= (const uvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() - v0;
+				}
+
+				inline uvec4& operator *= (float s) {
+					return v *= s;
+				}
+
+				inline uvec4& operator *= (const uvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() * v0;
+				}
+
+				inline uvec4& operator /= (float s) {
+					return v /= s;
+				}
+
+				inline uvec4& operator /= (const uvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() / v0;
+				}
+
+				// ----------------------------------------------------------------- //
 
 				uint32_t &x, &y, &z, &w;
 				uint32_t &r, &g, &b, &a;
