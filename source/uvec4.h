@@ -161,7 +161,7 @@ class uvec4
 
 				// ----------------------------------------------------------------- //
 
-				inline uvec4& operator += (float s) {
+				inline uvec4& operator += (uint32_t s) {
 					return v += s;
 				}
 
@@ -169,7 +169,7 @@ class uvec4
 					return v = v.shuffle4_ro<mask>() + v0;
 				}
 
-				inline uvec4& operator -= (float s) {
+				inline uvec4& operator -= (uint32_t s) {
 					return v -= s;
 				}
 
@@ -177,7 +177,7 @@ class uvec4
 					return v = v.shuffle4_ro<mask>() - v0;
 				}
 
-				inline uvec4& operator *= (float s) {
+				inline uvec4& operator *= (uint32_t s) {
 					return v *= s;
 				}
 
@@ -185,7 +185,7 @@ class uvec4
 					return v = v.shuffle4_ro<mask>() * v0;
 				}
 
-				inline uvec4& operator /= (float s) {
+				inline uvec4& operator /= (uint32_t s) {
 					return v /= s;
 				}
 
@@ -331,7 +331,7 @@ class uvec4
 			return v0;
 		}
 /*
-		friend inline uvec4& operator /= (uvec4 &v, float f) {
+		friend inline uvec4& operator /= (uvec4 &v, uint32_t f) {
 			???
 		}
 

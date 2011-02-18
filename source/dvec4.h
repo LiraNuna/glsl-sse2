@@ -187,7 +187,7 @@ class dvec4
 
 				// ----------------------------------------------------------------- //
 
-				inline dvec4& operator += (float s) {
+				inline dvec4& operator += (double s) {
 					return v += s;
 				}
 
@@ -195,7 +195,7 @@ class dvec4
 					return v = v.shuffle4_ro<mask>() + v0;
 				}
 
-				inline dvec4& operator -= (float s) {
+				inline dvec4& operator -= (double s) {
 					return v -= s;
 				}
 
@@ -203,7 +203,7 @@ class dvec4
 					return v = v.shuffle4_ro<mask>() - v0;
 				}
 
-				inline dvec4& operator *= (float s) {
+				inline dvec4& operator *= (double s) {
 					return v *= s;
 				}
 
@@ -211,7 +211,7 @@ class dvec4
 					return v = v.shuffle4_ro<mask>() * v0;
 				}
 
-				inline dvec4& operator /= (float s) {
+				inline dvec4& operator /= (double s) {
 					return v /= s;
 				}
 

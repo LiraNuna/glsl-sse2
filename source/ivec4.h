@@ -161,7 +161,7 @@ class ivec4
 
 				// ----------------------------------------------------------------- //
 
-				inline ivec4& operator += (float s) {
+				inline ivec4& operator += (int32_t s) {
 					return v += s;
 				}
 
@@ -169,7 +169,7 @@ class ivec4
 					return v = v.shuffle4_ro<mask>() + v0;
 				}
 
-				inline ivec4& operator -= (float s) {
+				inline ivec4& operator -= (int32_t s) {
 					return v -= s;
 				}
 
@@ -177,7 +177,7 @@ class ivec4
 					return v = v.shuffle4_ro<mask>() - v0;
 				}
 
-				inline ivec4& operator *= (float s) {
+				inline ivec4& operator *= (int32_t s) {
 					return v *= s;
 				}
 
@@ -185,7 +185,7 @@ class ivec4
 					return v = v.shuffle4_ro<mask>() * v0;
 				}
 
-				inline ivec4& operator /= (float s) {
+				inline ivec4& operator /= (int32_t s) {
 					return v /= s;
 				}
 
@@ -331,7 +331,7 @@ class ivec4
 			return v0;
 		}
 /*
-		friend inline ivec4& operator /= (ivec4 &v, float f) {
+		friend inline ivec4& operator /= (ivec4 &v, int32_t f) {
 			???
 		}
 
@@ -411,7 +411,7 @@ class ivec4
 			return _mm_xor_si128(_mm_add_epi32(v.m, mask), mask);
 		}
 
-		friend inline const ivec4 clamp(const ivec4 &v, float f1, float f2) {
+		friend inline const ivec4 clamp(const ivec4 &v, int32_t f1, int32_t f2) {
 			return max(min(v, f2), f1);
 		}
 
