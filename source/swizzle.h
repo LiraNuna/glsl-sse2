@@ -70,62 +70,6 @@ struct _swizzle4_maker
 
 		// ----------------------------------------------------------------- //
 
-		inline bool operator == (const V &v0) {
-			return __shuffled(v.m) == v0;
-		}
-
-		inline bool operator != (const V &v0) {
-			return __shuffled(v.m) != v0;
-		}
-
-		// ----------------------------------------------------------------- //
-
-		inline const V operator + (S s) {
-			return s + __shuffled(v.m);
-		}
-
-		inline const V operator + (const V &v0) {
-			return v0 + __shuffled(v.m);
-		}
-
-		inline const V operator - () {
-			return -__shuffled(v.m);
-		}
-
-		inline const V operator - (S s) {
-			return __shuffled(v.m) - s;
-		}
-
-		inline const V operator - (const V &v0) {
-			return __shuffled(v.m) - v0;
-		}
-
-		friend inline const V operator - (S s, const base &b) {
-			return s - b.__shuffled(b.v.m);
-		}
-
-		inline const V operator * (S s) {
-			return s * __shuffled(v.m);
-		}
-
-		inline const V operator * (const V &v0) {
-			return v0 * __shuffled(v.m);
-		}
-
-		inline const V operator / (S s) {
-			return __shuffled(v.m) / s;
-		}
-
-		inline const V operator / (const V &v0) {
-			return __shuffled(v.m) / v0;
-		}
-
-		friend inline const V operator / (S s, const base &b) {
-			return s / b.__shuffled(b.v.m);
-		}
-
-		// ----------------------------------------------------------------- //
-
 		TS x, y, z, w;
 		TS r, g, b, a;
 		TS s, t, p, q;
