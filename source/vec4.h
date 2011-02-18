@@ -1,6 +1,8 @@
 #ifndef __VEC4_H__
 #define __VEC4_H__
 
+#include <cstdio>
+
 #include <emmintrin.h>
 
 #include "swizzle.h"

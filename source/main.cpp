@@ -69,7 +69,7 @@ int main()
 	tests::vec4::testSwizzleWrite();
 	tests::vec4::testUnary();
 
-#define VECTOR vec4
+#define VECTOR dvec4
 
 	VECTOR v  (4, 3, 2, 1);
 	VECTOR res(1, 2, 3, 4);
@@ -114,16 +114,16 @@ int main()
 	assert(res == VECTOR(5, 6, 8, 9));
 
 	res.wzyx += res.xyxy;
-	assert(res == VECTOR(14, 14, 11, 11));
+	assert(res == VECTOR(11, 11, 14, 14));
 
 	res = clamp(res.zxwy, 12, 13);
-	assert(res == VECTOR(12, 13, 12, 13));
+	assert(res == VECTOR(13, 12, 13, 12));
 
 	res = res.xxxx + res.xyzw;
-	assert(res == VECTOR(24, 25, 24, 25));
+	assert(res == VECTOR(26, 25, 26, 25));
 
 	res = res.xyzw + res.zwxy;
-	assert(res == VECTOR(48, 50, 48, 50));
+	assert(res == VECTOR(52, 50, 52, 50));
 
 		// const correctness
 	const VECTOR c(1, 2, 3, 4);

@@ -174,32 +174,32 @@ struct _swizzle4_maker
 			return this->v += s;
 		}
 
-		inline V& operator += (const V &v) {
-			return this->v = this->v.shuffle4_ro<mask>() + v;
+		inline V& operator += (const V &v0) {
+			return this->v += v0.shuffle4_ro<mask>();
 		}
 
 		inline V& operator -= (S s) {
 			return this->v -= s;
 		}
 
-		inline V& operator -= (const V &v) {
-			return this->v = this->v.shuffle4_ro<mask>() - v;
+		inline V& operator -= (const V &v0) {
+			return this->v -= v0.shuffle4_ro<mask>();
 		}
 
 		inline V& operator *= (S s) {
 			return this->v *= s;
 		}
 
-		inline V& operator *= (const V &v) {
-			return this->v = this->v.shuffle4_ro<mask>() * v;
+		inline V& operator *= (const V &v0) {
+			return this->v *= v0.shuffle4_ro<mask>();
 		}
 
 		inline V& operator /= (S s) {
 			return this->v /= s;
 		}
 
-		inline V& operator /= (const V &v) {
-			return this->v = this->v.shuffle4_ro<mask>() / v;
+		inline V& operator /= (const V &v0) {
+			return this->v = v0.shuffle4_ro<mask>();
 		}
 
 		// ----------------------------------------------------------------- //

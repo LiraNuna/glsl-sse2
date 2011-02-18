@@ -9,6 +9,7 @@
 class ivec4
 {
 	private:
+
 		typedef _swizzle4_maker<int32_t, ivec4> _swzl;
 
 		// ----------------------------------------------------------------- //
