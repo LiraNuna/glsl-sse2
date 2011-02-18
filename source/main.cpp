@@ -119,9 +119,6 @@ int main()
 	res = clamp(res.zxwy, 12, 13);
 	assert(res == VECTOR(12, 13, 12, 13));
 
-	res = floor(res.xyzw);
-	assert(res == VECTOR(12, 13, 12, 13));
-
 	res = res.xxxx + res.xyzw;
 	assert(res == VECTOR(24, 25, 24, 25));
 
