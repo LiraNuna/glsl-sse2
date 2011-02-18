@@ -12,7 +12,7 @@ class vec4
 			// This macro saves 2-3 movaps instructions when shuffling
 			// This has to be a macro since mask HAS to be an immidiate value
 		#define _mm_shufd(xmm, mask) _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(xmm), mask))
-		
+
 		typedef _swizzle4_maker<float, vec4> _swzl;
 
 		// ----------------------------------------------------------------- //

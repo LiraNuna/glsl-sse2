@@ -80,6 +80,10 @@ class dvec4
 					return _mask_apply<mask>(v);
 				}
 
+				inline double operator[](int index) const {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
 					// Swizzle of the swizzle, read only const
 				template<unsigned other_mask>
 				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro() const {
@@ -129,6 +133,10 @@ class dvec4
 					return _mask_apply<mask>(v);
 				}
 
+				inline double& operator[](int index) {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
 					// Swizzle from dvec4
 				inline _swzl_rw& operator = (const dvec4 &r) {
 					v = _mask_apply<_mask_reverser<mask>::MASK>(r);
@@ -176,6 +184,42 @@ class dvec4
 					typedef _mask_merger<mask, other_mask> merged;
 					return _swzl_rw<merged::MASK>(v);
 				}
+
+				// ----------------------------------------------------------------- //
+
+				inline dvec4& operator += (double s) {
+					return v += s;
+				}
+
+				inline dvec4& operator += (const dvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() + v0;
+				}
+
+				inline dvec4& operator -= (double s) {
+					return v -= s;
+				}
+
+				inline dvec4& operator -= (const dvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() - v0;
+				}
+
+				inline dvec4& operator *= (double s) {
+					return v *= s;
+				}
+
+				inline dvec4& operator *= (const dvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() * v0;
+				}
+
+				inline dvec4& operator /= (double s) {
+					return v /= s;
+				}
+
+				inline dvec4& operator /= (const dvec4 &v0) {
+					return v = v.shuffle4_ro<mask>() / v0;
+				}
+
+				// ----------------------------------------------------------------- //
 
 				double &x, &y, &z, &w;
 				double &r, &g, &b, &a;

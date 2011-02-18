@@ -123,7 +123,7 @@ class uvec4
 			return v0;
 		}
 /*
-		friend inline uvec4& operator /= (uvec4 &v, float f) {
+		friend inline uvec4& operator /= (uvec4 &v, uint32_t f) {
 			???
 		}
 
