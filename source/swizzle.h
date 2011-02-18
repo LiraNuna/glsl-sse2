@@ -83,7 +83,7 @@ struct _swizzle4_maker
 				return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m), s_mask));
 			}
 
-			inline const __m128 __shuffle(const __m128i &m, const int s_mask) const {
+			inline const __m128i __shuffle(const __m128i &m, const int s_mask) const {
 				return _mm_shuffle_epi32(m, s_mask);
 			}
 
