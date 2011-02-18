@@ -138,43 +138,41 @@ class dvec4
 				}
 
 					// Swizzle from dvec4
-				inline _swzl_rw& operator = (const dvec4 &r) {
-					v = _mask_apply<_mask_reverser<mask>::MASK>(r);
-					return *this;
+				inline dvec4& operator = (const dvec4 &r) {
+					return v = _mask_apply<_mask_reverser<mask>::MASK>(r);
 				}
 
 					// Swizzle from same r/o mask (v1.xyzw = v2.xyzw)
-				inline _swzl_rw& operator = (const _swzl_ro<mask> &s) {
-					v = s.v;
-					return *this;
+				inline dvec4& operator = (const _swzl_ro<mask> &s) {
+					return v = s.v;
 				}
 
 					// Swizzle from same mask (v1.xyzw = v2.xyzw)
-				inline _swzl_rw& operator = (const _swzl_rw &s) {
-					v = s.v;
-					return *this;
+				inline dvec4& operator = (const _swzl_rw &s) {
+					return v = s.v;
 				}
 
 					// Swizzle mask => other_mask, r/o (v1.zwxy = v2.xyxy)
 				template<unsigned other_mask>
-				inline _swzl_rw& operator = (const _swzl_ro<other_mask> &s) {
+				inline dvec4& operator = (const _swzl_ro<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
-					v = _mask_apply<merged::MASK>(s.v);
-					return *this;
+
+					return v = _mask_apply<merged::MASK>(s.v);
 				}
 
 					// Swizzle mask => other_mask (v1.zwxy = v2.xyzw)
 				template<unsigned other_mask>
-				inline _swzl_rw& operator = (const _swzl_rw<other_mask> &s) {
+				inline dvec4& operator = (const _swzl_rw<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
-					v = _mask_apply<merged::MASK>(s.v);
-					return *this;
+
+					return v = _mask_apply<merged::MASK>(s.v);
 				}
 
 					// Swizzle of the swizzle, read only (v.xxxx.yyyy)
 				template<unsigned other_mask>
 				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro() const {
 					typedef _mask_merger<mask, other_mask> merged;
+
 					return _swzl_ro<merged::MASK>(v);
 				}
 
@@ -182,6 +180,7 @@ class dvec4
 				template<unsigned other_mask>
 				inline _swzl_rw<_mask_merger<mask, other_mask>::MASK> shuffle4_rw() {
 					typedef _mask_merger<mask, other_mask> merged;
+
 					return _swzl_rw<merged::MASK>(v);
 				}
 
@@ -192,7 +191,7 @@ class dvec4
 				}
 
 				inline dvec4& operator += (const dvec4 &v0) {
-					return v = v.shuffle4_ro<mask>() + v0;
+					return v += v0.shuffle4_ro<mask>();
 				}
 
 				inline dvec4& operator -= (double s) {
@@ -200,7 +199,7 @@ class dvec4
 				}
 
 				inline dvec4& operator -= (const dvec4 &v0) {
-					return v = v.shuffle4_ro<mask>() - v0;
+					return v -= v0.shuffle4_ro<mask>();
 				}
 
 				inline dvec4& operator *= (double s) {
@@ -208,7 +207,7 @@ class dvec4
 				}
 
 				inline dvec4& operator *= (const dvec4 &v0) {
-					return v = v.shuffle4_ro<mask>() * v0;
+					return v *= v0.shuffle4_ro<mask>();
 				}
 
 				inline dvec4& operator /= (double s) {
@@ -216,7 +215,7 @@ class dvec4
 				}
 
 				inline dvec4& operator /= (const dvec4 &v0) {
-					return v = v.shuffle4_ro<mask>() / v0;
+					return v /= v0.shuffle4_ro<mask>();
 				}
 
 				// ----------------------------------------------------------------- //
