@@ -199,7 +199,7 @@ struct _swizzle4_maker
 		}
 
 		inline V& operator /= (const V &v0) {
-			return this->v = v0.shuffle4_ro<mask>();
+			return this->v /= v0.shuffle4_ro<mask>();
 		}
 
 		// ----------------------------------------------------------------- //
