@@ -730,8 +730,8 @@ class dvec4
 
 		friend inline bool operator != (const dvec4 &v0, const dvec4 &v1) {
 			return _mm_movemask_pd(_mm_and_pd(
-								   _mm_cmpeq_pd(v0.m1, v1.m1),
-								   _mm_cmpeq_pd(v0.m2, v1.m2))) != 0x00;
+								   _mm_cmpneq_pd(v0.m1, v1.m1),
+								   _mm_cmpneq_pd(v0.m2, v1.m2))) != 0x00;
 		}
 
 		// ----------------------------------------------------------------- //
