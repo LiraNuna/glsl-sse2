@@ -5,7 +5,7 @@ template<typename S, typename V>
 struct _swizzle4_maker
 {
 		// Merges mask `target` with `m` into one unified mask that does the same sequential shuffle
-	template <unsigned target, unsigned m>
+	template<unsigned target, unsigned m>
 	struct _mask_merger
 	{
 		enum
@@ -23,7 +23,7 @@ struct _swizzle4_maker
 	};
 
 		// Since we are working in little endian land, this reverses the shuffle mask
-	template <unsigned m>
+	template<unsigned m>
 	struct _mask_reverser
 	{
 		enum
@@ -61,7 +61,7 @@ struct _swizzle4_maker
 		// ----------------------------------------------------------------- //
 
 		inline operator const V () const {
-			return __shuffled(v.m);
+			return __shuffle(v.m, mask);
 		}
 
 		inline TS operator[](int index) {
@@ -85,15 +85,6 @@ struct _swizzle4_maker
 
 			inline const __m128i __shuffle(const __m128i &m, const int s_mask) const {
 				return _mm_shuffle_epi32(m, s_mask);
-			}
-
-		private:
-			inline const V __shuffled(const __m128 &m) const {
-				return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m), mask));
-			}
-
-			inline const V __shuffled(const __m128i &m) const {
-				return _mm_shuffle_epi32(m, mask);
 			}
 	};
 
@@ -133,39 +124,36 @@ struct _swizzle4_maker
 		// ----------------------------------------------------------------- //
 
 			// Swizzle from V
-		inline rw& operator = (const V &v) {
-			this->v.m = __shuffle(v.m, _mask_reverser<mask>::MASK);
-			return *this;
+		inline V& operator = (const V &v) {
+			return this->v = __shuffle(v.m, _mask_reverser<mask>::MASK);
 		}
 
 			// Swizzle from same r/o mask (v1.xyzw = v2.xyzw)
 		inline V& operator = (const ro<mask> &s) {
-			this->v.m = s.v.m;
-			return this->v;
+			return this->v = s.v;
 		}
 
 			// Swizzle from same mask (v1.xyzw = v2.xyzw)
 		inline V& operator = (const rw<mask> &s) {
-			this->v.m = s.v.m;
-			return this->v;
+			return this->v = s.v;
 		}
 
 		// ----------------------------------------------------------------- //
 
 			// Swizzle mask => other_mask, r/o (v1.zwxy = v2.xyxy)
 		template<unsigned other_mask>
-		inline rw& operator = (const ro<other_mask> &s) {
+		inline V& operator = (const ro<other_mask> &s) {
 			typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
-			this->v.m = __shuffle(s.v.m, merged::MASK);
-			return *this;
+
+			return this->v = __shuffle(s.v.m, merged::MASK);
 		}
 
 			// Swizzle mask => other_mask (v1.zwxy = v2.zwxy)
 		template<unsigned other_mask>
-		inline rw<_mask_merger<other_mask, _mask_reverser<mask>::MASK>::MASK> operator = (const rw<other_mask> &s) {
+		inline V& operator = (const rw<other_mask> &s) {
 			typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
-			this->v.m = __shuffle(s.v.m, merged::MASK);
-			return rw<merged::MASK>(this->v);
+
+			return this->v = __shuffle(s.v.m, merged::MASK);
 		}
 
 		// ----------------------------------------------------------------- //
