@@ -5,7 +5,7 @@
 
 #include <emmintrin.h>
 
-#include "swizzle.h"
+#include "swizzle4.h"
 
 class vec4
 {

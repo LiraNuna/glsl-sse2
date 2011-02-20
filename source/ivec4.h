@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <emmintrin.h>
 
-#include "swizzle.h"
+#include "swizzle4.h"
 
 class ivec4
 {
