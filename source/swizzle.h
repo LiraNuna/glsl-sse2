@@ -40,10 +40,49 @@ struct _swizzle4_maker
 			_mask_reverser();
 	};
 
+		// Splits a mask to two low and high masks
+	template <unsigned mask>
+	struct _mask_splitter
+	{
+		enum
+		{
+			HI = ((mask >> 0) & 1) | ((mask >> 2) & 1) << 1,
+			LO = ((mask >> 4) & 1) | ((mask >> 6) & 1) << 1,
+		};
+
+		private:
+			_mask_splitter();
+	};
+
+	template<unsigned mask>
+	struct shuffler
+	{
+		static inline V shuffle(const __m128 &m) {
+			return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m), mask));
+		}
+
+		static inline V shuffle(const __m128i &m) {
+			return _mm_shuffle_epi32(m, mask);
+		}
+
+		static inline V shuffle(const __m128d m[2]) {
+			const __m128d &S1 = m[(mask >> 1) & 1];
+			const __m128d &S2 = m[(mask >> 3) & 1];
+			const __m128d &S3 = m[(mask >> 5) & 1];
+			const __m128d &S4 = m[(mask >> 7) & 1];
+
+			return V(_mm_shuffle_pd(S1, S2, _mask_splitter<mask>::HI),
+					 _mm_shuffle_pd(S3, S4, _mask_splitter<mask>::LO));
+		}
+
+		private:
+			shuffler();
+	};
+
 	template<typename TV, typename TS, unsigned mask>
 	struct base
 	{
-			// This massive contructor maps a vector to references
+			// This massive constructor maps a vector to references
 		inline base(TV &v):
 			x(v[(mask >> 0) & 0x3]), y(v[(mask >> 2) & 0x3]),
 			z(v[(mask >> 4) & 0x3]), w(v[(mask >> 6) & 0x3]),
@@ -61,10 +100,10 @@ struct _swizzle4_maker
 		// ----------------------------------------------------------------- //
 
 		inline operator const V () const {
-			return __shuffle(v.m, mask);
+			return shuffler<mask>::shuffle(v.m);
 		}
 
-		inline TS operator[](int index) {
+		inline TS operator[](int index) const {
 			return v[(mask >> (index << 1)) & 0x3];
 		}
 
@@ -77,15 +116,6 @@ struct _swizzle4_maker
 			// Ideally this should be protected
 			// but since we dwell into cross-template arcane magic...
 		TV v;
-
-		protected:
-			inline const __m128 __shuffle(const __m128 &m, const int s_mask) const {
-				return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m), s_mask));
-			}
-
-			inline const __m128i __shuffle(const __m128i &m, const int s_mask) const {
-				return _mm_shuffle_epi32(m, s_mask);
-			}
 	};
 
 		// Read only
@@ -125,7 +155,7 @@ struct _swizzle4_maker
 
 			// Swizzle from V
 		inline V& operator = (const V &v) {
-			return this->v = __shuffle(v.m, _mask_reverser<mask>::MASK);
+			return this->v = shuffler<_mask_reverser<mask>::MASK>::shuffle(v.m);
 		}
 
 			// Swizzle from same r/o mask (v1.xyzw = v2.xyzw)
@@ -145,7 +175,7 @@ struct _swizzle4_maker
 		inline V& operator = (const ro<other_mask> &s) {
 			typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-			return this->v = __shuffle(s.v.m, merged::MASK);
+			return this->v = shuffler<merged::MASK>::shuffle(s.v.m);
 		}
 
 			// Swizzle mask => other_mask (v1.zwxy = v2.zwxy)
@@ -153,7 +183,7 @@ struct _swizzle4_maker
 		inline V& operator = (const rw<other_mask> &s) {
 			typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-			return this->v = __shuffle(s.v.m, merged::MASK);
+			return this->v = shuffler<merged::MASK>::shuffle(s.v.m);
 		}
 
 		// ----------------------------------------------------------------- //
