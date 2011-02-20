@@ -631,6 +631,6 @@ class vec4
 	#undef _mm_shufd
 };
 
-#include "swizzle.h"
+#include "swizzle4.h"
 
 #endif

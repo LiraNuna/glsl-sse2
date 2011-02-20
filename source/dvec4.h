@@ -759,6 +759,6 @@ class dvec4
 		};
 };
 
-#include "swizzle.h"
+#include "swizzle4.h"
 
 #endif
