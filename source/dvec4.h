@@ -8,7 +8,7 @@ class dvec4
 	private:
 			// The actual swizzle code, since we operate on two xmm registers
 		template <unsigned mask>
-		static inline dvec4 _mask_apply(const dvec4 &v)
+		static inline dvec4 shuffle(const dvec4 &v)
 		{
 			const __m128d &S1 = v.m[(mask >> 1) & 1];
 			const __m128d &S2 = v.m[(mask >> 3) & 1];
@@ -77,7 +77,7 @@ class dvec4
 
 			public:
 				inline operator const dvec4 () const {
-					return _mask_apply<mask>(v);
+					return shuffle<mask>(v);
 				}
 
 				inline double operator[](int index) const {
@@ -130,7 +130,7 @@ class dvec4
 
 			public:
 				inline operator const dvec4 () const {
-					return _mask_apply<mask>(v);
+					return shuffle<mask>(v);
 				}
 
 				inline double& operator[](int index) {
@@ -139,7 +139,7 @@ class dvec4
 
 					// Swizzle from dvec4
 				inline dvec4& operator = (const dvec4 &r) {
-					return v = _mask_apply<_mask_reverser<mask>::MASK>(r);
+					return v = shuffle<_mask_reverser<mask>::MASK>(r);
 				}
 
 					// Swizzle from same r/o mask (v1.xyzw = v2.xyzw)
@@ -157,7 +157,7 @@ class dvec4
 				inline dvec4& operator = (const _swzl_ro<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-					return v = _mask_apply<merged::MASK>(s.v);
+					return v = shuffle<merged::MASK>(s.v);
 				}
 
 					// Swizzle mask => other_mask (v1.zwxy = v2.xyzw)
@@ -165,7 +165,7 @@ class dvec4
 				inline dvec4& operator = (const _swzl_rw<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-					return v = _mask_apply<merged::MASK>(s.v);
+					return v = shuffle<merged::MASK>(s.v);
 				}
 
 					// Swizzle of the swizzle, read only (v.xxxx.yyyy)
@@ -760,5 +760,12 @@ class dvec4
 };
 
 #include "swizzle4.h"
+
+// Template specialization for mask 0xE4 (No shuffle)
+template <>
+inline dvec4 dvec4::shuffle<0x4E>(const dvec4 &v)
+{
+	return v;
+}
 
 #endif

@@ -12,6 +12,11 @@ class vec4
 			// This macro saves 2-3 movaps instructions when shuffling
 			// This has to be a macro since mask HAS to be an immidiate value
 		#define _mm_shufd(xmm, mask) _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(xmm), mask))
+
+		template<unsigned mask>
+		static inline __m128 shuffle(const __m128 &xmm) {
+			return _mm_shufd(xmm, mask);
+		}
 		
 			// Merges mask `target` with `m` into one unified mask that does the same sequential shuffle
 		template <unsigned target, unsigned m>
@@ -57,7 +62,7 @@ class vec4
 
 			public:
 				inline operator const vec4 () const {
-					return _mm_shufd(v.m, mask);
+					return shuffle<mask>(v.m);
 				}
 
 				inline float operator[](int index) const {
@@ -110,7 +115,7 @@ class vec4
 
 			public:
 				inline operator const vec4 () const {
-					return _mm_shufd(v.m, mask);
+					return shuffle<mask>(v.m);
 				}
 
 				inline float& operator[](int index) {
@@ -119,7 +124,7 @@ class vec4
 
 					// Swizzle from vec4
 				inline vec4& operator = (const vec4 &r) {
-					return v = _mm_shufd(r.m, _mask_reverser<mask>::MASK);
+					return v = shuffle<_mask_reverser<mask>::MASK>(r.m);
 				}
 
 					// Swizzle from same r/o mask (v1.xyzw = v2.xyzw)
@@ -137,7 +142,7 @@ class vec4
 				inline vec4& operator = (const _swzl_ro<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-					return v = _mm_shufd(s.v.m, merged::MASK);
+					return v = shuffle<merged::MASK>(s.v.m);
 				}
 
 					// Swizzle mask => other_mask (v1.zwxy = v2.xyxy)
@@ -145,7 +150,7 @@ class vec4
 				inline vec4& operator = (const _swzl_rw<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-					return v = _mm_shufd(s.v.m, merged::MASK);
+					return v = shuffle<merged::MASK>(s.v.m);
 				}
 
 					// Swizzle of the swizzle, read only (v.xxxx.yyyy)
@@ -630,6 +635,12 @@ class vec4
 		// Avoid pollution
 	#undef _mm_shufd
 };
+
+// Template specialization for mask 0xE4 (No shuffle)
+template<unsigned mask>
+inline __m128 shuffle(const __m128 &xmm) {
+	return xmm;
+}
 
 #include "swizzle4.h"
 

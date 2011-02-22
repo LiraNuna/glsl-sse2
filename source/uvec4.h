@@ -7,6 +7,11 @@
 class uvec4
 {
 	private:
+		template<unsigned mask>
+		static inline __m128i shuffle(const __m128i &xmm) {
+			return _mm_shuffle_epi32(xmm, mask);
+		}
+
 			// Merges mask `target` with `m` into one unified mask that does the same sequential shuffle
 		template <unsigned target, unsigned m>
 		struct _mask_merger
@@ -51,7 +56,7 @@ class uvec4
 
 			public:
 				inline operator const uvec4 () const {
-					return _mm_shuffle_epi32(v.m, mask);
+					return shuffle<mask>(v.m);
 				}
 
 				inline uint32_t operator[](int index) const {
@@ -104,7 +109,7 @@ class uvec4
 
 			public:
 				inline operator const uvec4 () const {
-					return _mm_shuffle_epi32(v.m, mask);
+					return shuffle<mask>(v.m);
 				}
 
 				inline uint32_t& operator[](int index) const {
@@ -113,7 +118,7 @@ class uvec4
 
 					// Swizzle from uvec4
 				inline uvec4& operator = (const uvec4 &r) {
-					return v = _mm_shuffle_epi32(r.m, _mask_reverser<mask>::MASK);
+					return v = shuffle<_mask_reverser<mask>::MASK>(r.m);
 				}
 
 					// Swizzle from same r/o mask (v1.xyzw = v2.xyzw)
@@ -131,7 +136,7 @@ class uvec4
 				inline uvec4& operator = (const _swzl_ro<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-					return v = _mm_shuffle_epi32(s.v.m, merged::MASK);
+					return v = shuffle<merged::MASK>(s.v.m);
 				}
 
 					// Swizzle mask => other_mask (v1.zwxy = v2.xyxy)
@@ -139,7 +144,7 @@ class uvec4
 				inline uvec4& operator = (const _swzl_rw<other_mask> &s) {
 					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
 
-					return v = _mm_shuffle_epi32(s.v.m, merged::MASK);
+					return v = shuffle<merged::MASK>(s.v.m);
 				}
 
 					// Swizzle of the swizzle, read only (v.xxxx.yyyy)
@@ -466,6 +471,12 @@ class uvec4
 			__m128i	m;
 		};
 };
+
+// Template specialization for mask 0xE4 (No shuffle)
+template<>
+inline __m128i uvec4::shuffle<0xE4>(const __m128i &xmm) {
+	return xmm;
+}
 
 #include "swizzle4.h"
 
