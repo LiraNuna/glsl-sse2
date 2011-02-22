@@ -83,7 +83,7 @@ struct _swizzle4_maker
 	struct base
 	{
 			// This massive constructor maps a vector to references
-		inline base(TV &v):
+		inline base(TV v):
 			x(v[(mask >> 0) & 0x3]), y(v[(mask >> 2) & 0x3]),
 			z(v[(mask >> 4) & 0x3]), w(v[(mask >> 6) & 0x3]),
 
