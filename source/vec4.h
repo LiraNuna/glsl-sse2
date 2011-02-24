@@ -637,8 +637,8 @@ class vec4
 };
 
 // Template specialization for mask 0xE4 (No shuffle)
-template<unsigned mask>
-inline __m128 shuffle(const __m128 &xmm) {
+template<>
+inline __m128 vec4::shuffle<0xE4>(const __m128 &xmm) {
 	return xmm;
 }
 
