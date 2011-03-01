@@ -285,22 +285,22 @@ class dvec4
 
 			// Write direct access operator
 		inline double& operator[](int index) {
-			return ((double*)this)[index];
+			return reinterpret_cast<double *>(this)[index];
 		}
 
 			// Read direct access operator
 		inline const double& operator[](int index) const {
-			return ((const double*)this)[index];
+			return reinterpret_cast<const double*>(this)[index];
 		}
 
 			// Cast operator
 		inline operator double* () {
-			return (double*)this;
+			return reinterpret_cast<double *>(this);
 		}
 
 			// Const cast operator
 		inline operator const double* () const {
-			return (const double*)this;
+			return reinterpret_cast<const double *>(this);
 		}
 
 		// ----------------------------------------------------------------- //

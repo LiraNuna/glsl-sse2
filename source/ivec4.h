@@ -280,22 +280,22 @@ class ivec4
 
 			// Write direct access operator
 		inline int32_t& operator[](int index) {
-			return ((int32_t*)this)[index];
+			return reinterpret_cast<int32_t *>(this)[index];
 		}
 
 			// Read direct access operator
 		inline const int32_t& operator[](int index) const {
-			return ((const int32_t*)this)[index];
+			return reinterpret_cast<const int32_t *>(this)[index];
 		}
 
 			// Cast operator
 		inline operator int32_t* () {
-			return (int32_t*)this;
+			return reinterpret_cast<int32_t *>(this);
 		}
 
 			// Const cast operator
 		inline operator const int32_t* () const {
-			return (const int32_t*)this;
+			return reinterpret_cast<const int32_t *>(this);
 		}
 
 		// ----------------------------------------------------------------- //
