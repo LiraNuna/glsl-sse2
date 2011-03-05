@@ -3,7 +3,7 @@
 #ifndef __MAT4_H__
 #define __MAT4_H__
 
-typedef union mat4
+class mat4
 {
 	private:
 			// Most compilers don't use pshufd (SSE2) when _mm_shuffle(x, x, mask) is used
@@ -446,10 +446,8 @@ typedef union mat4
 				__m128 m3;
 				__m128 m4;
 			};
-		};
 
 /*			// This code is waiting for unrestricted unions feature in c++0x
-		union {
 			vec4 v[4];
 			struct {
 				vec4 v1;
@@ -457,10 +455,11 @@ typedef union mat4
 				vec4 v3;
 				vec4 v4;
 			};
-		};
 */
+		};
+
 		// Avoid pollution
 	#undef _mm_shufd
-} mat4;
+};
 
 #endif
