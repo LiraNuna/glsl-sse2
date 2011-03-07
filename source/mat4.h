@@ -37,7 +37,7 @@ class mat4
 			m4 = _v4.m;
 		}
 			
-			// Full float constructor
+			// Full scalar constructor
 		inline mat4(float  _f1, float  _f2, float  _f3, float  _f4, 
 		            float  _f5, float  _f6, float  _f7, float  _f8,
 		            float  _f9, float _f10, float _f11, float _f12,
@@ -332,8 +332,7 @@ class mat4
 
 			// Code was taken and case-optimized from "Streaming SIMD Extension - Inverse of 4x4 Matrix" by Intel
 			// Which could be found here: ftp://download.intel.com/design/PentiumIII/sml/24504301.pdf
-		friend inline mat4 invert(const mat4 &m)
-		{
+		friend inline mat4 invert(const mat4 &m) {
 			__m128 tmp;
 			__m128 row0, row1, row2, row3;
 

@@ -191,11 +191,60 @@ class dmat4
 
 			return *this;
 		}
-/*
+
 		inline dmat4& operator *= (const dmat4 &m) {
-			// TODO
+			__m128d xx1 = _mm_unpacklo_pd(m11, m11);
+			__m128d yy1 = _mm_unpackhi_pd(m11, m11);
+			__m128d zz1 = _mm_unpacklo_pd(m12, m12);
+			__m128d ww1 = _mm_unpackhi_pd(m12, m12);
+			m11 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m11, xx1),
+										_mm_mul_pd(m.m21, yy1)),
+							 _mm_add_pd(_mm_mul_pd(m.m31, zz1),
+										_mm_mul_pd(m.m41, ww1)));
+			m12 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m12, xx1),
+										_mm_mul_pd(m.m22, yy1)),
+							 _mm_add_pd(_mm_mul_pd(m.m32, zz1),
+										_mm_mul_pd(m.m42, ww1)));
+			__m128d xx2 = _mm_unpacklo_pd(m21, m21);
+			__m128d yy2 = _mm_unpackhi_pd(m21, m21);
+			__m128d zz2 = _mm_unpacklo_pd(m22, m22);
+			__m128d ww2 = _mm_unpackhi_pd(m22, m22);
+			m21 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m11, xx2),
+										_mm_mul_pd(m.m21, yy2)),
+							 _mm_add_pd(_mm_mul_pd(m.m31, zz2),
+										_mm_mul_pd(m.m41, ww2)));
+			m22 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m12, xx2),
+										_mm_mul_pd(m.m22, yy2)),
+							 _mm_add_pd(_mm_mul_pd(m.m32, zz2),
+										_mm_mul_pd(m.m42, ww2)));
+			__m128d xx3 = _mm_unpacklo_pd(m31, m31);
+			__m128d yy3 = _mm_unpackhi_pd(m31, m31);
+			__m128d zz3 = _mm_unpacklo_pd(m32, m32);
+			__m128d ww3 = _mm_unpackhi_pd(m32, m32);
+			m31 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m11, xx3),
+										_mm_mul_pd(m.m21, yy3)),
+							 _mm_add_pd(_mm_mul_pd(m.m31, zz3),
+										_mm_mul_pd(m.m41, ww3)));
+			m32 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m12, xx3),
+										_mm_mul_pd(m.m22, yy3)),
+							 _mm_add_pd(_mm_mul_pd(m.m32, zz3),
+										_mm_mul_pd(m.m42, ww3)));
+			__m128d xx4 = _mm_unpacklo_pd(m41, m41);
+			__m128d yy4 = _mm_unpackhi_pd(m41, m41);
+			__m128d zz4 = _mm_unpacklo_pd(m42, m42);
+			__m128d ww4 = _mm_unpackhi_pd(m42, m42);
+			m41 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m11, xx4),
+										_mm_mul_pd(m.m21, yy4)),
+							 _mm_add_pd(_mm_mul_pd(m.m31, zz4),
+										_mm_mul_pd(m.m41, ww4)));
+			m42 = _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m12, xx4),
+										_mm_mul_pd(m.m22, yy4)),
+							 _mm_add_pd(_mm_mul_pd(m.m32, zz4),
+										_mm_mul_pd(m.m42, ww4)));
+
+			return *this;
 		}
-*/
+
 		inline dmat4& operator /= (double d) {
 			__m128d dd = _mm_set1_pd(d);
 			m11 = _mm_div_pd(m11, dd);
@@ -306,11 +355,58 @@ class dmat4
 									_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m32, m.m42), zz),
 											   _mm_mul_pd(_mm_unpackhi_pd(m.m32, m.m42), ww))));
 		}
-/*
+
 		friend inline dmat4 operator * (const dmat4 &m0, const dmat4 &m1) {
-			// TODO
+			__m128d xx1 = _mm_unpacklo_pd(m0[0].m1, m0[0].m1);
+			__m128d yy1 = _mm_unpackhi_pd(m0[0].m1, m0[0].m1);
+			__m128d zz1 = _mm_unpacklo_pd(m0[0].m2, m0[0].m2);
+			__m128d ww1 = _mm_unpackhi_pd(m0[0].m2, m0[0].m2);
+			__m128d xx2 = _mm_unpacklo_pd(m0[1].m1, m0[1].m1);
+			__m128d yy2 = _mm_unpackhi_pd(m0[1].m1, m0[1].m1);
+			__m128d zz2 = _mm_unpacklo_pd(m0[1].m2, m0[1].m2);
+			__m128d ww2 = _mm_unpackhi_pd(m0[1].m2, m0[1].m2);
+			__m128d xx3 = _mm_unpacklo_pd(m0[2].m1, m0[2].m1);
+			__m128d yy3 = _mm_unpackhi_pd(m0[2].m1, m0[2].m1);
+			__m128d zz3 = _mm_unpacklo_pd(m0[2].m2, m0[2].m2);
+			__m128d ww3 = _mm_unpackhi_pd(m0[2].m2, m0[2].m2);
+			__m128d xx4 = _mm_unpacklo_pd(m0[3].m1, m0[3].m1);
+			__m128d yy4 = _mm_unpackhi_pd(m0[3].m1, m0[3].m1);
+			__m128d zz4 = _mm_unpacklo_pd(m0[3].m2, m0[3].m2);
+			__m128d ww4 = _mm_unpackhi_pd(m0[3].m2, m0[3].m2);
+			return dmat4(_mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m11, xx1),
+											   _mm_mul_pd(m1.m21, yy1)),
+									_mm_add_pd(_mm_mul_pd(m1.m31, zz1),
+											   _mm_mul_pd(m1.m41, ww1))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m12, xx1),
+											   _mm_mul_pd(m1.m22, yy1)),
+									_mm_add_pd(_mm_mul_pd(m1.m32, zz1),
+											   _mm_mul_pd(m1.m42, ww1))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m11, xx2),
+											   _mm_mul_pd(m1.m21, yy2)),
+									_mm_add_pd(_mm_mul_pd(m1.m31, zz2),
+											   _mm_mul_pd(m1.m41, ww2))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m12, xx2),
+											   _mm_mul_pd(m1.m22, yy2)),
+									_mm_add_pd(_mm_mul_pd(m1.m32, zz2),
+											   _mm_mul_pd(m1.m42, ww2))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m11, xx3),
+											   _mm_mul_pd(m1.m21, yy3)),
+									_mm_add_pd(_mm_mul_pd(m1.m31, zz3),
+											   _mm_mul_pd(m1.m41, ww3))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m12, xx3),
+											   _mm_mul_pd(m1.m22, yy3)),
+									_mm_add_pd(_mm_mul_pd(m1.m32, zz3),
+											   _mm_mul_pd(m1.m42, ww3))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m11, xx4),
+											   _mm_mul_pd(m1.m21, yy4)),
+									_mm_add_pd(_mm_mul_pd(m1.m31, zz4),
+											   _mm_mul_pd(m1.m41, ww4))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m1.m12, xx4),
+											   _mm_mul_pd(m1.m22, yy4)),
+									_mm_add_pd(_mm_mul_pd(m1.m32, zz4),
+											   _mm_mul_pd(m1.m42, ww4))));
 		}
-*/
+
 		friend inline dmat4 operator / (const dmat4 &m, double d) {
 			__m128d dd = _mm_set1_pd(d);
 			return dmat4(_mm_div_pd(m.m11, dd), _mm_div_pd(m.m12, dd),
