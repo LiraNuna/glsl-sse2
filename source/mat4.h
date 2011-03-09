@@ -290,43 +290,25 @@ class mat4
 		}
 
 		friend inline float determinant(const mat4 &m) {
-			__m128 tmp;
-			__m128 row0, row1, row2, row3;
-
-			tmp  = _mm_shufd(_mm_unpacklo_ps(m.m1, m.m2), 0xD8);
-			row1 = _mm_shufd(_mm_unpacklo_ps(m.m3, m.m4), 0xD8);
-
-			row0 = _mm_shuffle_ps(tmp, row1, 0x88);
-			row1 = _mm_shuffle_ps(row1, tmp, 0xDD);
-
-			tmp  = _mm_shufd(_mm_unpackhi_ps(m.m1, m.m2), 0xD8);
-			row3 = _mm_shufd(_mm_unpackhi_ps(m.m3, m.m4), 0xD8);
-
-			row2 = _mm_shuffle_ps(tmp, row3, 0x88);
-			row3 = _mm_shuffle_ps(row3, tmp, 0xDD);
-
-			tmp = _mm_shufd(_mm_mul_ps(row2, row3), 0xB1);
-
-			__m128 m1 = _mm_mul_ps(row1, tmp);
-
-			tmp = _mm_shufd(tmp, 0x4E);
-
-			m1 = _mm_sub_ps(_mm_mul_ps(row1, tmp), m1);
-			tmp = _mm_shufd(_mm_mul_ps(row1, row2), 0xB1);
-
-			m1 = _mm_add_ps(_mm_mul_ps(row3, tmp), m1);
-			tmp = _mm_shufd(tmp, 0x4E);
-
-			m1 = _mm_sub_ps(m1, _mm_mul_ps(row3, tmp));
-			tmp  = _mm_shufd(_mm_mul_ps(_mm_shufd(row1, 0x4E), row3), 0xB1);
-
-			row2 = _mm_shufd(row2, 0x4E);
-			m1 = _mm_add_ps(_mm_mul_ps(row2, tmp), m1);
-			m1 = _mm_sub_ps(m1, _mm_mul_ps(row2, _mm_shufd(tmp, 0x4E)));
-
-			__m128 d = _mm_mul_ps(row0, m1);
-			d = _mm_add_ps(_mm_shufd(d, 0x4E), d);
-			d = _mm_add_ss(_mm_shufd(d, 0xB1), d);
+			__m128 r = _mm_shufd(m.m3, 0x39);
+			__m128 v1 = _mm_mul_ps(r, _mm_shufd(m.m4, 0xE4));
+			__m128 v2 = _mm_mul_ps(r, _mm_shufd(m.m4, 0x4E));
+			__m128 v3 = _mm_mul_ps(r, _mm_shufd(m.m4, 0x93));
+			__m128 r1 = _mm_sub_ps(_mm_shufd(v2, 0x39),
+								   _mm_shufd(v1, 0x4E));
+			__m128 r2 = _mm_sub_ps(_mm_shufd(v3, 0x4E),
+								   _mm_shufd(v3, 0xE4));
+			__m128 r3 = _mm_sub_ps(_mm_shufd(v2, 0xE4),
+								   _mm_shufd(v1, 0x39));
+			v2 = _mm_shufd(m.m2, 0x39);
+			v3 = _mm_shufd(v2, 0x39);
+			v1 = _mm_shufd(v3, 0x39);
+			__m128 d = _mm_mul_ps(_mm_add_ps(
+								  _mm_add_ps(_mm_mul_ps(v2, r1),
+											 _mm_mul_ps(v3, r2)),
+											 _mm_mul_ps(v1, r3)), m.m1);
+			d = _mm_add_ps(d, _mm_shufd(d, 0x4E));
+			d = _mm_sub_ss(d, _mm_shufd(d, 0x11));
 			return _mm_cvtss_f32(d);
 		}
 
