@@ -207,7 +207,7 @@ class mat4
 						_mm_mul_ps(m.m3, ff), _mm_mul_ps(m.m4, ff));
 		}
 
-		friend inline vec4 operator * (const vec4 &v, const mat4 &m) {
+		friend inline vec4 operator * (const mat4 &m, const vec4 &v) {
 			return _mm_add_ps(_mm_add_ps(
 							  _mm_mul_ps(m.m1, _mm_shufd(v.m, 0x00)),
 							  _mm_mul_ps(m.m2, _mm_shufd(v.m, 0x55))),
@@ -215,7 +215,7 @@ class mat4
 							  _mm_mul_ps(m.m4, _mm_shufd(v.m, 0xFF))));
 		}
 
-		friend inline vec4 operator * (const mat4 &m, const vec4 &v) {
+		friend inline vec4 operator * (const vec4 &v, const mat4 &m) {
 			__m128 t1 = _mm_unpacklo_ps(m.m1, m.m2);
 			__m128 t2 = _mm_unpacklo_ps(m.m3, m.m4);
 			__m128 t3 = _mm_unpackhi_ps(m.m1, m.m2);

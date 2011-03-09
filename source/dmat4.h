@@ -326,7 +326,7 @@ class dmat4
 						 _mm_mul_pd(m.m41, dd), _mm_mul_pd(m.m42, dd));
 		}
 
-		friend inline dvec4 operator * (const dvec4 &v, const dmat4 &m) {
+		friend inline dvec4 operator * (const dmat4 &m, const dvec4 &v) {
 			__m128d xx = _mm_unpacklo_pd(v.m1, v.m1);
 			__m128d yy = _mm_unpackhi_pd(v.m1, v.m1);
 			__m128d zz = _mm_unpacklo_pd(v.m2, v.m2);
@@ -341,7 +341,7 @@ class dmat4
 											   _mm_mul_pd(m.m42, ww))));
 		}
 
-		friend inline dvec4 operator * (const dmat4 &m, const dvec4 &v) {
+		friend inline dvec4 operator * (const dvec4 &v, const dmat4 &m) {
 			__m128d xx = _mm_unpacklo_pd(v.m1, v.m1);
 			__m128d yy = _mm_unpackhi_pd(v.m1, v.m1);
 			__m128d zz = _mm_unpacklo_pd(v.m2, v.m2);
