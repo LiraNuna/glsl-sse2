@@ -447,11 +447,31 @@ class dmat4
 						 _mm_unpacklo_pd(m.m12, m.m22), _mm_unpacklo_pd(m.m32, m.m42),
 						 _mm_unpackhi_pd(m.m12, m.m22), _mm_unpackhi_pd(m.m32, m.m42));
 		}
-/*
-		friend inline float determinant(const dmat4 &m) {
-			// TODO
-		}
 
+		friend inline double determinant(const dmat4 &m) {
+			__m128d r1 = _mm_mul_pd(m.m11, _mm_shuffle_pd(m.m21, m.m21, 0x01));
+			__m128d r2 = _mm_mul_pd(m.m12, _mm_shuffle_pd(m.m22, m.m22, 0x01));
+			__m128d r3 = _mm_mul_pd(m.m31, _mm_shuffle_pd(m.m41, m.m41, 0x01));
+			__m128d r4 = _mm_mul_pd(m.m32, _mm_shuffle_pd(m.m42, m.m42, 0x01));
+			__m128d c1 = _mm_sub_pd(_mm_mul_pd(m.m31, _mm_unpackhi_pd(m.m42, m.m42)),
+									_mm_mul_pd(m.m41, _mm_unpackhi_pd(m.m32, m.m32)));
+			__m128d c2 = _mm_sub_pd(_mm_mul_pd(m.m41, _mm_unpacklo_pd(m.m32, m.m32)),
+									_mm_mul_pd(m.m31, _mm_unpacklo_pd(m.m42, m.m42)));
+			__m128d d  = _mm_add_pd(_mm_mul_pd(_mm_sub_pd(_mm_mul_pd(m.m12, _mm_unpackhi_pd(m.m21, m.m21)),
+														  _mm_mul_pd(m.m22, _mm_unpackhi_pd(m.m11, m.m11))),
+																		    _mm_unpacklo_pd(c1, c2)),
+								    _mm_mul_pd(_mm_sub_pd(_mm_mul_pd(m.m22, _mm_unpacklo_pd(m.m11, m.m11)),
+														  _mm_mul_pd(m.m12, _mm_unpacklo_pd(m.m21, m.m21))),
+																		    _mm_unpackhi_pd(c1, c2)));
+			r1 = _mm_sub_sd(r1, _mm_unpackhi_pd(r1, r1));
+			r2 = _mm_sub_sd(r2, _mm_unpackhi_pd(r2, r2));
+			r3 = _mm_sub_sd(r3, _mm_unpackhi_pd(r3, r3));
+			r4 = _mm_sub_sd(r4, _mm_unpackhi_pd(r4, r4));
+			return _mm_cvtsd_f64(_mm_sub_sd(_mm_add_sd(_mm_mul_sd(r1, r4),
+													   _mm_mul_sd(r2, r3)),
+											_mm_add_sd(_mm_unpackhi_pd(d, d), d)));
+		}
+/*
 		friend inline mat4 invert(const dmat4 &m) {
 			// TODO
 		}
