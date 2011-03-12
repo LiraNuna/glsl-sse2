@@ -763,7 +763,7 @@ class dvec4
 
 // Template specialization for mask 0xE4 (No shuffle)
 template <>
-inline dvec4 dvec4::shuffle<0x4E>(const dvec4 &v)
+inline dvec4 dvec4::shuffle<0xE4>(const dvec4 &v)
 {
 	return v;
 }
