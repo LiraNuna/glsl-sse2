@@ -17,8 +17,6 @@ class vec4
 
 		typedef _swizzle4_maker<float, vec4> _swzl;
 
-		// ----------------------------------------------------------------- //
-
 	public:
 			// Empty constructor
 		inline vec4() {
@@ -74,22 +72,22 @@ class vec4
 
 			// Write direct access operator
 		inline float& operator[](int index) {
-			return ((float*)this)[index];
+			return reinterpret_cast<float *>(this)[index];
 		}
 
 			// Read direct access operator
 		inline const float& operator[](int index) const {
-			return ((const float*)this)[index];
+			return reinterpret_cast<const float *>(this)[index];
 		}
 
 			// Cast operator
 		inline operator float* () {
-			return (float*)this;
+			return reinterpret_cast<float *>(this);
 		}
 
 			// Const cast operator
 		inline operator const float* () const {
-			return (const float*)this;
+			return reinterpret_cast<const float *>(this);
 		}
 
 		// ----------------------------------------------------------------- //

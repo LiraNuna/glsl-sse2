@@ -9,10 +9,7 @@
 class uvec4
 {
 	private:
-
 		typedef _swizzle4_maker<uint32_t, uvec4> _swzl;
-
-		// ----------------------------------------------------------------- //
 
 	public:
 			// Empty constructor
@@ -69,22 +66,22 @@ class uvec4
 
 			// Write direct access operator
 		inline uint32_t& operator[](int index) {
-			return ((uint32_t*)this)[index];
+			return reinterpret_cast<uint32_t *>(this)[index];
 		}
 
 			// Read direct access operator
 		inline const uint32_t& operator[](int index) const {
-			return ((const uint32_t*)this)[index];
+			return reinterpret_cast<const uint32_t *>(this)[index];
 		}
 
 			// Cast operator
 		inline operator uint32_t* () {
-			return (uint32_t*)this;
+			return reinterpret_cast<uint32_t *>(this);
 		}
 
 			// Const cast operator
 		inline operator const uint32_t* () const {
-			return (const uint32_t*)this;
+			return reinterpret_cast<const uint32_t *>(this);
 		}
 
 		// ----------------------------------------------------------------- //
