@@ -184,7 +184,7 @@ class vec4
 				}
 
 				inline vec4& operator -= (const vec4 &v0) {
-					return v += v0.shuffle4_ro<mask>();
+					return v -= v0.shuffle4_ro<mask>();
 				}
 
 				inline vec4& operator *= (float s) {
