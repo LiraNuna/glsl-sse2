@@ -1,8 +1,6 @@
 #ifndef __DVEC4_H__
 #define __DVEC4_H__
 
-#include "dvec2.h"
-
 class dvec4
 {
 	private:
@@ -86,7 +84,7 @@ class dvec4
 
 					// Swizzle of the swizzle, read only const (2)
 				template<unsigned other_mask>
-				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro4() const {
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro2() const {
 					typedef _mask_merger<mask, other_mask> merged;
 					return _swzl_ro<merged::MASK>(v);
 				}
