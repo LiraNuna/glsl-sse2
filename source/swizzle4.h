@@ -1,5 +1,5 @@
-#ifndef __SWIZZLE_H__
-#define __SWIZZLE_H__
+#ifndef __SWIZZLE4_H__
+#define __SWIZZLE4_H__
 
 #define wzyx shuffle4_rw4<_MM_SHUFFLE(0,1,2,3)>()
 #define zwyx shuffle4_rw4<_MM_SHUFFLE(0,1,3,2)>()
@@ -25,23 +25,6 @@
 #define xzyw shuffle4_rw4<_MM_SHUFFLE(3,1,2,0)>()
 #define yxzw shuffle4_rw4<_MM_SHUFFLE(3,2,0,1)>()
 #define xyzw shuffle4_rw4<_MM_SHUFFLE(3,2,1,0)>()
-
-#define xxxx shuffle4_ro2<_MM_SHUFFLE(0,0,0,0)>()
-#define xxxy shuffle4_ro2<_MM_SHUFFLE(1,0,0,0)>()
-#define xxyx shuffle4_ro2<_MM_SHUFFLE(0,1,0,0)>()
-#define xxyy shuffle4_ro2<_MM_SHUFFLE(1,1,0,0)>()
-#define xyxx shuffle4_ro2<_MM_SHUFFLE(0,0,1,0)>()
-#define xyxy shuffle4_ro2<_MM_SHUFFLE(1,0,1,0)>()
-#define xyyx shuffle4_ro2<_MM_SHUFFLE(0,1,1,0)>()
-#define xyyy shuffle4_ro2<_MM_SHUFFLE(1,1,1,0)>()
-#define yxxx shuffle4_ro2<_MM_SHUFFLE(0,0,0,1)>()
-#define yxxy shuffle4_ro2<_MM_SHUFFLE(1,0,0,1)>()
-#define yxyx shuffle4_ro2<_MM_SHUFFLE(0,1,0,1)>()
-#define yxyy shuffle4_ro2<_MM_SHUFFLE(1,1,0,1)>()
-#define yyxx shuffle4_ro2<_MM_SHUFFLE(0,0,1,1)>()
-#define yyxy shuffle4_ro2<_MM_SHUFFLE(1,0,1,1)>()
-#define yyyx shuffle4_ro2<_MM_SHUFFLE(0,1,1,1)>()
-#define yyyy shuffle4_ro2<_MM_SHUFFLE(1,1,1,1)>()
 
 #define xxxz shuffle4_ro4<_MM_SHUFFLE(2,0,0,0)>()
 #define xxxw shuffle4_ro4<_MM_SHUFFLE(3,0,0,0)>()

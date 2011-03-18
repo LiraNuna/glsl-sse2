@@ -3,10 +3,229 @@
 
 #include <emmintrin.h>
 
+#include "dvec4.h"
+
 class dvec2
 {
 	private:
-		// TODO: Swizzle proxy class
+			// Merges mask `target` with `m` into one unified mask that does the same sequential shuffle
+		template <unsigned target, unsigned m>
+		struct _mask_merger
+		{
+			enum
+			{
+				ROW0 = ((target >> (((m >> 0) & 1) << 1)) & 1) << 0,
+				ROW1 = ((target >> (((m >> 1) & 1) << 1)) & 1) << 1,
+
+				MASK = ROW0 | ROW1,
+			};
+
+			private:
+				_mask_merger();
+		};
+
+			// Since we are working in little endian land, this reverses the shuffle mask
+		template <unsigned m>
+		struct _mask_reverser
+		{
+			enum
+			{
+				ROW0 = 0 << (((m >> 0) & 3) << 1),
+				ROW1 = 1 << (((m >> 2) & 3) << 1),
+
+				MASK = ROW0 | ROW1,
+			};
+
+			private:
+				_mask_reverser();
+		};
+
+			// Splits a mask to two low and high masks
+		template <unsigned mask>
+		struct _mask_splitter
+		{
+			enum
+			{
+				HI = ((mask >> 0) & 1) | ((mask >> 2) & 1) << 1,
+				LO = ((mask >> 4) & 1) | ((mask >> 6) & 1) << 1,
+			};
+
+			private:
+				_mask_splitter();
+		};
+
+			// Swizzle helper (Read only)
+		template <unsigned mask>
+		struct _swzl_ro
+		{
+			friend class dvec2;
+
+			public:
+				inline operator const dvec2 () const {
+					return _mm_shuffle_pd(v.m, v.m, mask);
+				}
+
+				inline double operator[](int index) const {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
+					// Swizzle of the swizzle, read only const (2)
+				template<unsigned other_mask>
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle2_ro2() const {
+					typedef _mask_merger<mask, other_mask> merged;
+					return _swzl_ro<merged::MASK>(v);
+				}
+
+					// Swizzle of the swizzle, read/write const
+				template<unsigned other_mask>
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle2_rw2() const {
+					typedef _mask_merger<mask, other_mask> merged;
+					return _swzl_ro<merged::MASK>(v);
+				}
+
+				const double &x, &y;
+				const double &r, &g;
+				const double &s, &t;
+
+			private:
+					// This massive constructor maps a vector to references
+				inline _swzl_ro(const dvec2 &v):
+					x(v[(mask >> 0) & 0x1]), y(v[(mask >> 1) & 0x1]),
+					r(v[(mask >> 0) & 0x1]), g(v[(mask >> 1) & 0x1]),
+					s(v[(mask >> 0) & 0x1]), t(v[(mask >> 1) & 0x1]),
+
+					v(v) {
+						// Empty
+				}
+
+					// Reference to unswizzled self
+				const dvec2 &v;
+		};
+
+			// Swizzle helper (Read/Write)
+		template <unsigned mask>
+		struct _swzl_rw
+		{
+			friend class dvec2;
+
+			public:
+				inline operator const dvec2 () const {
+					return _mm_shuffle_pd(v.m, v.m, mask);
+				}
+
+				inline double& operator[](int index) {
+					return v[(mask >> (index << 1)) & 0x3];
+				}
+
+					// Swizzle from dvec2
+				inline dvec2& operator = (const dvec2 &r) {
+					return v = _mm_shuffle_pd(r.m, r.m, _mask_reverser<mask>::MASK);
+				}
+
+					// Swizzle from same r/o mask (v1.xyzw = v2.xyzw)
+				inline dvec2& operator = (const _swzl_ro<mask> &s) {
+					return v = s.v;
+				}
+
+					// Swizzle from same mask (v1.xyzw = v2.xyzw)
+				inline dvec2& operator = (const _swzl_rw &s) {
+					return v = s.v;
+				}
+
+					// Swizzle mask => other_mask, r/o (v1.zwxy = v2.xyxy)
+				template<unsigned other_mask>
+				inline dvec2& operator = (const _swzl_ro<other_mask> &s) {
+					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
+
+					return v = _mm_shuffle_pd(s.v.m, s.v.m, merged::MASK);
+				}
+
+					// Swizzle mask => other_mask (v1.zwxy = v2.xyzw)
+				template<unsigned other_mask>
+				inline dvec2& operator = (const _swzl_rw<other_mask> &s) {
+					typedef _mask_merger<other_mask, _mask_reverser<mask>::MASK> merged;
+
+					return v = _mm_shuffle_pd(s.v.m, s.v.m, merged::MASK);
+				}
+
+					// Swizzle of the swizzle, read only (v.xxxx.yyyy) (2)
+				template<unsigned other_mask>
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro2() const {
+					typedef _mask_merger<mask, other_mask> merged;
+
+					return _swzl_ro<merged::MASK>(v);
+				}
+
+					// Swizzle of the swizzle, read only (v.xxxx.yyyy) (4)
+				template<unsigned other_mask>
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle2_ro2() const {
+					typedef _mask_merger<mask, other_mask> merged;
+
+					return _swzl_ro<merged::MASK>(v);
+				}
+
+					// Swizzle of the swizzle, read/write (v1.zyxw.wzyx = ...)
+				template<unsigned other_mask>
+				inline _swzl_rw<_mask_merger<mask, other_mask>::MASK> shuffle2_rw2() {
+					typedef _mask_merger<mask, other_mask> merged;
+
+					return _swzl_rw<merged::MASK>(v);
+				}
+
+				// ----------------------------------------------------------------- //
+
+				inline dvec2& operator += (double s) {
+					return v += s;
+				}
+
+				inline dvec2& operator += (const dvec2 &v0) {
+					return v += v0.shuffle2_ro2<mask>();
+				}
+
+				inline dvec2& operator -= (double s) {
+					return v -= s;
+				}
+
+				inline dvec2& operator -= (const dvec2 &v0) {
+					return v -= v0.shuffle2_ro2<mask>();
+				}
+
+				inline dvec2& operator *= (double s) {
+					return v *= s;
+				}
+
+				inline dvec2& operator *= (const dvec2 &v0) {
+					return v *= v0.shuffle2_ro2<mask>();
+				}
+
+				inline dvec2& operator /= (double s) {
+					return v /= s;
+				}
+
+				inline dvec2& operator /= (const dvec2 &v0) {
+					return v /= v0.shuffle2_ro2<mask>();
+				}
+
+				// ----------------------------------------------------------------- //
+
+				double &x, &y;
+				double &r, &g;
+				double &s, &t;
+
+			private:
+					// This massive contructor maps a vector to references
+				inline _swzl_rw(dvec2 &v):
+					x(v[(mask >> 0) & 0x1]), y(v[(mask >> 1) & 0x1]),
+					r(v[(mask >> 0) & 0x1]), g(v[(mask >> 1) & 0x1]),
+					s(v[(mask >> 0) & 0x1]), t(v[(mask >> 1) & 0x1]),
+
+					v(v) {
+						// Empty
+				}
+
+					// Reference to unswizzled self
+				dvec2 &v;
+		};
 
 	public:
 			// Empty constructor
@@ -63,7 +282,30 @@ class dvec2
 
 		// ----------------------------------------------------------------- //
 
-		// TODO: Swizzle proxy providers
+			// Read-write swizzle
+		template<unsigned mask>
+		inline _swzl_rw<mask> shuffle2_rw2() {
+			return _swzl_rw<mask>(*this);
+		}
+
+			// Read-write swizzle, const, actually read only
+		template<unsigned mask>
+		inline _swzl_ro<mask> shuffle2_rw2() const {
+			return _swzl_ro<mask>(*this);
+		}
+
+			// Read-only swizzle (2)
+		template<unsigned mask>
+		inline _swzl_ro<mask> shuffle2_ro2() const {
+			return _swzl_ro<mask>(*this);
+		}
+
+			// Read-only swizzle (4)
+		template<unsigned mask>
+		inline dvec4 shuffle4_ro2() const {
+			return dvec4(_mm_shuffle_pd(m, m, _mask_splitter<mask>::HI),
+						 _mm_shuffle_pd(m, m, _mask_splitter<mask>::LO));
+		}
 
 		// ----------------------------------------------------------------- //
 
@@ -373,6 +615,7 @@ class dvec2
 		};
 };
 
+#include "swizzle2.h"
 #include "swizzle4.h"
 
 #endif

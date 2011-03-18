@@ -1,8 +1,6 @@
 #ifndef __VEC4_H__
 #define __VEC4_H__
 
-#include <cstdio>
-
 #include <emmintrin.h>
 
 class vec4
@@ -663,6 +661,7 @@ inline __m128 vec4::shuffle<0xE4>(const __m128 &xmm) {
 	return xmm;
 }
 
+#include "swizzle2.h"
 #include "swizzle4.h"
 
 #endif

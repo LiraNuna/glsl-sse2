@@ -327,33 +327,33 @@ class dmat4
 		}
 
 		friend inline dvec4 operator * (const dmat4 &m, const dvec4 &v) {
-			__m128d xx = _mm_unpacklo_pd(v.m1, v.m1);
-			__m128d yy = _mm_unpackhi_pd(v.m1, v.m1);
-			__m128d zz = _mm_unpacklo_pd(v.m2, v.m2);
-			__m128d ww = _mm_unpackhi_pd(v.m2, v.m2);
-			return dvec4(_mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m11, xx),
-											   _mm_mul_pd(m.m21, yy)),
-									_mm_add_pd(_mm_mul_pd(m.m31, zz),
-											   _mm_mul_pd(m.m41, ww))),
-						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m12, xx),
-											   _mm_mul_pd(m.m22, yy)),
-									_mm_add_pd(_mm_mul_pd(m.m32, zz),
-											   _mm_mul_pd(m.m42, ww))));
+			__m128d _xx = _mm_unpacklo_pd(v.m1, v.m1);
+			__m128d _yy = _mm_unpackhi_pd(v.m1, v.m1);
+			__m128d _zz = _mm_unpacklo_pd(v.m2, v.m2);
+			__m128d _ww = _mm_unpackhi_pd(v.m2, v.m2);
+			return dvec4(_mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m11, _xx),
+											   _mm_mul_pd(m.m21, _yy)),
+									_mm_add_pd(_mm_mul_pd(m.m31, _zz),
+											   _mm_mul_pd(m.m41, _ww))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(m.m12, _xx),
+											   _mm_mul_pd(m.m22, _yy)),
+									_mm_add_pd(_mm_mul_pd(m.m32, _zz),
+											   _mm_mul_pd(m.m42, _ww))));
 		}
 
 		friend inline dvec4 operator * (const dvec4 &v, const dmat4 &m) {
-			__m128d xx = _mm_unpacklo_pd(v.m1, v.m1);
-			__m128d yy = _mm_unpackhi_pd(v.m1, v.m1);
-			__m128d zz = _mm_unpacklo_pd(v.m2, v.m2);
-			__m128d ww = _mm_unpackhi_pd(v.m2, v.m2);
-			return dvec4(_mm_add_pd(_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m11, m.m21), xx),
-											   _mm_mul_pd(_mm_unpackhi_pd(m.m11, m.m21), yy)),
-									_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m12, m.m22), zz),
-											   _mm_mul_pd(_mm_unpackhi_pd(m.m12, m.m22), ww))),
-						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m31, m.m41), xx),
-											   _mm_mul_pd(_mm_unpackhi_pd(m.m31, m.m41), yy)),
-									_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m32, m.m42), zz),
-											   _mm_mul_pd(_mm_unpackhi_pd(m.m32, m.m42), ww))));
+			__m128d _xx = _mm_unpacklo_pd(v.m1, v.m1);
+			__m128d _yy = _mm_unpackhi_pd(v.m1, v.m1);
+			__m128d _zz = _mm_unpacklo_pd(v.m2, v.m2);
+			__m128d _ww = _mm_unpackhi_pd(v.m2, v.m2);
+			return dvec4(_mm_add_pd(_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m11, m.m21), _xx),
+											   _mm_mul_pd(_mm_unpackhi_pd(m.m11, m.m21), _yy)),
+									_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m12, m.m22), _zz),
+											   _mm_mul_pd(_mm_unpackhi_pd(m.m12, m.m22), _ww))),
+						 _mm_add_pd(_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m31, m.m41), _xx),
+											   _mm_mul_pd(_mm_unpackhi_pd(m.m31, m.m41), _yy)),
+									_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m.m32, m.m42), _zz),
+											   _mm_mul_pd(_mm_unpackhi_pd(m.m32, m.m42), _ww))));
 		}
 
 		friend inline dmat4 operator * (const dmat4 &m0, const dmat4 &m1) {
