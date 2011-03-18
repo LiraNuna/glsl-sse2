@@ -1,8 +1,6 @@
 #ifndef __DVEC4_H__
 #define __DVEC4_H__
 
-#include <emmintrin.h>
-
 class dvec4
 {
 	private:
@@ -84,16 +82,23 @@ class dvec4
 					return v[(mask >> (index << 1)) & 0x3];
 				}
 
-					// Swizzle of the swizzle, read only const
+					// Swizzle of the swizzle, read only const (2)
 				template<unsigned other_mask>
-				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro() const {
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro2() const {
+					typedef _mask_merger<mask, other_mask> merged;
+					return _swzl_ro<merged::MASK>(v);
+				}
+
+					// Swizzle of the swizzle, read only const (4)
+				template<unsigned other_mask>
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro4() const {
 					typedef _mask_merger<mask, other_mask> merged;
 					return _swzl_ro<merged::MASK>(v);
 				}
 
 					// Swizzle of the swizzle, read/write const
 				template<unsigned other_mask>
-				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_rw() const {
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_rw4() const {
 					typedef _mask_merger<mask, other_mask> merged;
 					return _swzl_ro<merged::MASK>(v);
 				}
@@ -168,9 +173,17 @@ class dvec4
 					return v = shuffle<merged::MASK>(s.v);
 				}
 
-					// Swizzle of the swizzle, read only (v.xxxx.yyyy)
+					// Swizzle of the swizzle, read only (v.xxxx.yyyy) (2)
 				template<unsigned other_mask>
-				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro() const {
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro2() const {
+					typedef _mask_merger<mask, other_mask> merged;
+
+					return _swzl_ro<merged::MASK>(v);
+				}
+
+					// Swizzle of the swizzle, read only (v.xxxx.yyyy) (4)
+				template<unsigned other_mask>
+				inline _swzl_ro<_mask_merger<mask, other_mask>::MASK> shuffle4_ro4() const {
 					typedef _mask_merger<mask, other_mask> merged;
 
 					return _swzl_ro<merged::MASK>(v);
@@ -178,7 +191,7 @@ class dvec4
 
 					// Swizzle of the swizzle, read/write (v1.zyxw.wzyx = ...)
 				template<unsigned other_mask>
-				inline _swzl_rw<_mask_merger<mask, other_mask>::MASK> shuffle4_rw() {
+				inline _swzl_rw<_mask_merger<mask, other_mask>::MASK> shuffle4_rw4() {
 					typedef _mask_merger<mask, other_mask> merged;
 
 					return _swzl_rw<merged::MASK>(v);
@@ -191,7 +204,7 @@ class dvec4
 				}
 
 				inline dvec4& operator += (const dvec4 &v0) {
-					return v += v0.shuffle4_ro<mask>();
+					return v += v0.shuffle4_ro4<mask>();
 				}
 
 				inline dvec4& operator -= (double s) {
@@ -199,7 +212,7 @@ class dvec4
 				}
 
 				inline dvec4& operator -= (const dvec4 &v0) {
-					return v -= v0.shuffle4_ro<mask>();
+					return v -= v0.shuffle4_ro4<mask>();
 				}
 
 				inline dvec4& operator *= (double s) {
@@ -207,7 +220,7 @@ class dvec4
 				}
 
 				inline dvec4& operator *= (const dvec4 &v0) {
-					return v *= v0.shuffle4_ro<mask>();
+					return v *= v0.shuffle4_ro4<mask>();
 				}
 
 				inline dvec4& operator /= (double s) {
@@ -215,7 +228,7 @@ class dvec4
 				}
 
 				inline dvec4& operator /= (const dvec4 &v0) {
-					return v /= v0.shuffle4_ro<mask>();
+					return v /= v0.shuffle4_ro4<mask>();
 				}
 
 				// ----------------------------------------------------------------- //
@@ -307,19 +320,25 @@ class dvec4
 
 			// Read-write swizzle
 		template<unsigned mask>
-		inline _swzl_rw<mask> shuffle4_rw() {
+		inline _swzl_rw<mask> shuffle4_rw4() {
 			return _swzl_rw<mask>(*this);
 		}
 
 			// Read-write swizzle, const, actually read only
 		template<unsigned mask>
-		inline _swzl_ro<mask> shuffle4_rw() const {
+		inline _swzl_ro<mask> shuffle4_rw4() const {
 			return _swzl_ro<mask>(*this);
 		}
 
-			// Read-only swizzle
+			// Read-only swizzle (2)
 		template<unsigned mask>
-		inline _swzl_ro<mask> shuffle4_ro() const {
+		inline _swzl_ro<mask> shuffle4_ro2() const {
+			return _swzl_ro<mask>(*this);
+		}
+
+			// Read-only swizzle (4)
+		template<unsigned mask>
+		inline _swzl_ro<mask> shuffle4_ro4() const {
 			return _swzl_ro<mask>(*this);
 		}
 
