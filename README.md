@@ -1,14 +1,12 @@
 # glsl-sse2
 
-### What is glsl-sse2?
-
 glsl-sse2 is a header-only abstraction library aimed providing the comfort
-of GLSL programming language and efficiency of SSE2. In short, it is a optimized
+of GLSL programming language and efficiency of SSE2. In short, it is an optimized
 SIMD vector library that behaves like the GLSL shading language.
 
-### Why?
+## Why?
 
-SSE2 is a very powerful extension used in the IA32 and amd64 instruction set
+SSE2 is a very powerful extension used in the ia32 and amd64 instruction set
 often overlooked by many programmers who are seeking a performance boost for
 their applications.
 
@@ -23,7 +21,7 @@ glsl-sse2 takes care of all the nasty stuff while providing the familiar API of
 GLSL - no ugly assembly no cache misses due to bad compiler output and no need
 to resort to unmaintainable or unportable code.
 
-### Example code and output
+## Example code and output
 
 glsl-sse2 is geared toward performance, and will do it's best to signal the
 compiler how to best utilize the situation at hand:
@@ -53,7 +51,7 @@ would be converted to this assembly code using glsl-sse2 and GCC 4.4:
 Minimal instructions and compiler hints help GCC to output a hand-written 
 quality assembly code, complete with instruction pairing and little overhead.
         
-### Getting maximum performance out of glsl-sse2
+## Getting maximum performance out of glsl-sse2
 
 glsl-sse2 is already written in a way that will try and make the compiler output
 the best possible code. However, some compilers are unable to produce the best
@@ -64,15 +62,17 @@ Most notable compiler that produces poor code is MSVC 2008 and below.
 
 Another factor that will effect code performance is the architecture. glsl-sse2
 will be most effective in a 64bit environment where there are double the SSE
-registers to operate on, causing less register pressure.
+registers to operate on, causing less register pressure, as well as a guarentee
+of SSE2 being present - without the need to check CPUID (although most, if not
+all, CPUs today support SSE2 which was released in 2001, a decade ago!).
 
-### Status
+## Status
 
 Currently the project is in a stable state, however it had not been subjected
-to real-world use yet. You are welcome to try it at your own risk, and file bugs
-if such are found.
+to real-world (ab)use yet. You are welcome to try it at your own risk, and file 
+bug reports, if such are found.
 
-### What about `vec3`? Where is `mat2`?
+## What about `vec3`? Where is `mat2`?
 
 Because of alignment issues, only direct SSE2 compatible types will be
 implemented. Types such as `vec3`, `mat3` and types that depend on those,
@@ -82,7 +82,7 @@ If you need an unsupported type, simply use a bigger one - you will still get
 the best out of the vectorization power of SSE (there are, of course, several
 exceptions, such as `mat2` and `vec2`, depending on the operations performed).
 
-### Tested compilers
+## Tested compilers
 
  * GNU C Compiler 4.x and above
  * Microsoft Visual C++ 2008 and better
@@ -90,7 +90,7 @@ exceptions, such as `mat2` and `vec2`, depending on the operations performed).
  * clang 2.8
  * llvm-gcc using DragonEgg 2.8
 
-### Recommended compilers
+## Recommended compilers
 
 Since not all compilers are equal, and behave differently, glsl-sse2 does its
 best to try and make most of the compilers output similar code. However some
@@ -100,4 +100,22 @@ extract most performance out of glsl-sse2, ordered from best to worst:
  * Intel C++ Compiler 12.0+
  * GNU C Compiler 4.4+
  * Microsoft Visual C++ 2010+
- * clang 2.8
+ * clang 2.8 / DragonEgg
+ 
+The use of LLVM compilers (clang, dragonegg) is highly discouraged, as LLVM does
+not output code that makes good use of instruction pairing, which can result a 
+flat 100% speed increase when used correctly (such as ICC/GCC).
+ 
+## TODO
+ - Downswizzle `dvec4` => `dvec2` (Circular dependency issues) 
+ - Refactor swizzling, it's a mess (`new_swizzle` branch only works on GCC 4.4)
+ - Conversion functions between vectors (other than 
+ - Missing classes: `dmat2`, `dmat2x4`, `dmat4x2`
+ - Better tests
+ - Namespacing
+ - Complete rewrite of `bvec4`
+ 	- swizzling of booleans
+ 	- Automatic bvec4 generators for all vector classes 
+ - Exponential functions for `vec4`, `dvec4`
+ - Trigonometric functions for `vec4`, `dvec4`
+ - Division for `ivec4`, `uvec4`
