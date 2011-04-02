@@ -260,6 +260,16 @@ class dvec2
 
 		// ----------------------------------------------------------------- //
 
+		inline void* operator new(size_t size) throw() {
+			return _mm_malloc(size, 8);
+		}
+
+		inline void operator delete(void* ptr) {
+			_mm_free(ptr);
+		}
+
+		// ----------------------------------------------------------------- //
+
 			// Write direct access operator
 		inline double& operator[](int index) {
 			return reinterpret_cast<double *>(this)[index];

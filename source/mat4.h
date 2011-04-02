@@ -54,8 +54,18 @@ class mat4
 			m2 = m.m2;
 			m3 = m.m3;
 			m4 = m.m4;
-		}		
-			
+		}
+
+		// ----------------------------------------------------------------- //
+
+		inline void* operator new(size_t size) throw() {
+			return _mm_malloc(size, 8);
+		}
+
+		inline void operator delete(void* ptr) {
+			_mm_free(ptr);
+		}
+
 		// ----------------------------------------------------------------- //
 
 			// Write direct access operator

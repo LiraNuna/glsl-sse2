@@ -83,7 +83,17 @@ class dmat4
 
 			m41 = m.m41;
 			m42 = m.m42;
-		}		
+		}
+
+		// ----------------------------------------------------------------- //
+
+		inline void* operator new(size_t size) throw() {
+			return _mm_malloc(size, 8);
+		}
+
+		inline void operator delete(void* ptr) {
+			_mm_free(ptr);
+		}
 			
 		// ----------------------------------------------------------------- //
 

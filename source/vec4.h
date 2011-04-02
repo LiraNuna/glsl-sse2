@@ -277,6 +277,16 @@ class vec4
 
 		// ----------------------------------------------------------------- //
 
+		inline void* operator new(size_t size) throw() {
+			return _mm_malloc(size, 8);
+		}
+
+		inline void operator delete(void* ptr) {
+			_mm_free(ptr);
+		}
+
+		// ----------------------------------------------------------------- //
+
 			// Read-write swizzle
 		template<unsigned mask>
 		inline _swzl_rw<mask> shuffle4_rw4() {
