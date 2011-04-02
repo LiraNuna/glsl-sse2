@@ -300,21 +300,20 @@ class mat4
 		}
 
 		friend inline float determinant(const mat4 &m) {
-			__m128 r = _mm_shufd(m.m3, 0x39);
-			__m128 v1 = _mm_mul_ps(r, _mm_shufd(m.m4, 0xE4));
+			__m128 r  = 			  _mm_shufd(m.m3, 0x39 );
+			__m128 v1 = _mm_mul_ps(r,           m.m4       );
 			__m128 v2 = _mm_mul_ps(r, _mm_shufd(m.m4, 0x4E));
 			__m128 v3 = _mm_mul_ps(r, _mm_shufd(m.m4, 0x93));
 			__m128 r1 = _mm_sub_ps(_mm_shufd(v2, 0x39),
 								   _mm_shufd(v1, 0x4E));
-			__m128 r2 = _mm_sub_ps(_mm_shufd(v3, 0x4E),
-								   _mm_shufd(v3, 0xE4));
-			__m128 r3 = _mm_sub_ps(_mm_shufd(v2, 0xE4),
-								   _mm_shufd(v1, 0x39));
+			__m128 r2 = _mm_sub_ps(_mm_shufd(v3, 0x4E), v3);
+			__m128 r3 = _mm_sub_ps(v2, _mm_shufd(v1, 0x39));
+
+			v1 = _mm_shufd(m.m2, 0x93);
 			v2 = _mm_shufd(m.m2, 0x39);
-			v3 = _mm_shufd(v2, 0x39);
-			v1 = _mm_shufd(v3, 0x39);
-			__m128 d = _mm_mul_ps(_mm_add_ps(
-								  _mm_add_ps(_mm_mul_ps(v2, r1),
+			v3 = _mm_shufd(m.m2, 0x4E);
+			__m128 d = _mm_mul_ps(_mm_add_ps(_mm_add_ps(
+											 _mm_mul_ps(v2, r1),
 											 _mm_mul_ps(v3, r2)),
 											 _mm_mul_ps(v1, r3)), m.m1);
 			d = _mm_add_ps(d, _mm_shufd(d, 0x4E));
