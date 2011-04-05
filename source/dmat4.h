@@ -88,7 +88,7 @@ class dmat4
 		// ----------------------------------------------------------------- //
 
 		inline void* operator new(size_t size) throw() {
-			return _mm_malloc(size, 8);
+			return _mm_malloc(size, 16);
 		}
 
 		inline void operator delete(void* ptr) {
@@ -482,7 +482,7 @@ class dmat4
 											_mm_add_sd(_mm_unpackhi_pd(d, d), d)));
 		}
 /*
-		friend inline mat4 invert(const dmat4 &m) {
+		friend inline dmat4 invert(const dmat4 &m) {
 			// TODO
 		}
 */
