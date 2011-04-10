@@ -191,7 +191,7 @@ class mat4
 
 		friend inline mat4 operator + (const mat4 &m0, const mat4 &m1) {
 			return mat4(_mm_add_ps(m0.m1, m1.m1), _mm_add_ps(m0.m2, m1.m2),
-						_mm_add_ps(m0.m3, m1.m3), _mm_add_ps(m0.m4, m1.m3));
+						_mm_add_ps(m0.m3, m1.m3), _mm_add_ps(m0.m4, m1.m4));
 		}
 
 		friend inline mat4 operator - (const mat4 &m, float f) {
