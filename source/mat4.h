@@ -3,6 +3,8 @@
 #ifndef __MAT4_H__
 #define __MAT4_H__
 
+extern void printv(const vec4&);
+
 class mat4
 {
 	private:
@@ -278,14 +280,14 @@ class mat4
 
 		friend inline mat4 operator / (const mat4 &m0, const mat4 &m1) {
 			return mat4(_mm_div_ps(m0.m1, m1.m1), _mm_div_ps(m0.m2, m1.m2),
-						_mm_div_ps(m0.m3, m1.m3), _mm_div_ps(m0.m4, m1.m3));
+						_mm_div_ps(m0.m3, m1.m3), _mm_div_ps(m0.m4, m1.m4));
 		}
 
 		// ----------------------------------------------------------------- //
 
 		friend inline mat4 matrixCompMult(const mat4 &m0, const mat4 &m1) {
 			return mat4(_mm_mul_ps(m0.m1, m1.m1), _mm_mul_ps(m0.m2, m1.m2),
-						_mm_mul_ps(m0.m3, m1.m3), _mm_mul_ps(m0.m4, m1.m3));
+						_mm_mul_ps(m0.m3, m1.m3), _mm_mul_ps(m0.m4, m1.m4));
 		}
 
 		// ----------------------------------------------------------------- //
@@ -369,7 +371,7 @@ class mat4
 												  _mm_mul_ps(v2, f5)),
 												  _mm_mul_ps(v3, f6)));
 			__m128 d = _mm_mul_ps(m.m[0], _mm_movelh_ps(_mm_unpacklo_ps(i1, i2),
-													   _mm_unpacklo_ps(i3, i4)));
+													    _mm_unpacklo_ps(i3, i4)));
 			d = _mm_add_ps(d, _mm_shufd(d, 0x4E));
 			d = _mm_add_ps(d, _mm_shufd(d, 0x11));
 			d = _mm_div_ps(_mm_set1_ps(1.0f), d);
