@@ -321,99 +321,62 @@ class mat4
 			return _mm_cvtss_f32(d);
 		}
 
-			// Code was taken and case-optimized from "Streaming SIMD Extension - Inverse of 4x4 Matrix" by Intel
-			// Which could be found here: ftp://download.intel.com/design/PentiumIII/sml/24504301.pdf
 		friend inline mat4 invert(const mat4 &m) {
-			__m128 tmp;
-			__m128 row0, row1, row2, row3;
-
-			__m128 m1 = m.m1;
-			__m128 m2 = m.m2;
-			__m128 m3 = m.m3;
-			__m128 m4 = m.m4;
-
-			tmp  = _mm_shufd(_mm_unpacklo_ps(m1, m2), 0xD8);
-			row1 = _mm_shufd(_mm_unpacklo_ps(m3, m4), 0xD8);
-
-			row0 = _mm_shuffle_ps(tmp, row1, 0x88);
-			row1 = _mm_shuffle_ps(row1, tmp, 0xDD);
-
-			tmp  = _mm_shufd(_mm_unpackhi_ps(m1, m2), 0xD8);
-			row3 = _mm_shufd(_mm_unpackhi_ps(m3, m4), 0xD8);
-
-			row2 = _mm_shuffle_ps(tmp, row3, 0x88);
-			row3 = _mm_shuffle_ps(row3, tmp, 0xDD);
-
-			tmp = _mm_shufd(_mm_mul_ps(row2, row3), 0xB1);
-
-			m1 = _mm_mul_ps(row1, tmp);
-			m2 = _mm_mul_ps(row0, tmp);
-
-			tmp = _mm_shufd(tmp, 0x4E);
-
-			m1 = _mm_sub_ps(_mm_mul_ps(row1, tmp), m1);
-			m2 = _mm_shufd(_mm_sub_ps(_mm_mul_ps(row0, tmp), m2), 0x4E);
-
-			tmp = _mm_shufd(_mm_mul_ps(row1, row2), 0xB1);
-
-			m1 = _mm_add_ps(_mm_mul_ps(row3, tmp), m1);
-			m4 = _mm_mul_ps(row0, tmp);
-
-			tmp = _mm_shufd(tmp, 0x4E);
-
-			m1 = _mm_sub_ps(m1, _mm_mul_ps(row3, tmp));
-			m4 = _mm_shufd(_mm_sub_ps(_mm_mul_ps(row0, tmp), m4), 0x4E);
-
-			tmp  = _mm_shufd(_mm_mul_ps(_mm_shufd(row1, 0x4E), row3), 0xB1);
-			row2 = _mm_shufd(row2, 0x4E);
-
-			m1 = _mm_add_ps(_mm_mul_ps(row2, tmp), m1);
-			m3 = _mm_mul_ps(row0, tmp);
-
-			tmp = _mm_shufd(tmp, 0x4E);
-			m1 = _mm_sub_ps(m1, _mm_mul_ps(row2, tmp));
-			m3 = _mm_shufd(_mm_sub_ps(_mm_mul_ps(row0, tmp), m3), 0x4E);
-
-			tmp = _mm_shufd(_mm_mul_ps(row0, row1), 0xB1);
-
-			m3 = _mm_add_ps(_mm_mul_ps(row3, tmp), m3);
-			m4 = _mm_sub_ps(_mm_mul_ps(row2, tmp), m4);
-
-			tmp = _mm_shufd(tmp, 0x4E);
-
-			m3 = _mm_sub_ps(_mm_mul_ps(row3, tmp), m3);
-			m4 = _mm_sub_ps(m4, _mm_mul_ps(row2, tmp));
-
-			tmp = _mm_shufd(_mm_mul_ps(row0, row3), 0xB1);
-
-			m2 = _mm_sub_ps(m2, _mm_mul_ps(row2, tmp));
-			m3 = _mm_add_ps(_mm_mul_ps(row1, tmp), m3);
-
-			tmp = _mm_shufd(tmp, 0x4E);
-
-			m2 = _mm_add_ps(_mm_mul_ps(row2, tmp), m2);
-			m3 = _mm_sub_ps(m3, _mm_mul_ps(row1, tmp));
-
-			tmp = _mm_shufd(_mm_mul_ps(row0, row2), 0xB1);
-
-			m2 = _mm_add_ps(_mm_mul_ps(row3, tmp), m2);
-			m4 = _mm_sub_ps(m4, _mm_mul_ps(row1, tmp));
-
-			tmp = _mm_shufd(tmp, 0x4E);
-
-			m2 = _mm_sub_ps(m2, _mm_mul_ps(row3, tmp));
-			m4 = _mm_add_ps(_mm_mul_ps(row1, tmp), m4);
-
-			__m128 det = _mm_mul_ps(row0, m1);
-			det = _mm_add_ps(_mm_shufd(det, 0x4E), det);
-			det = _mm_add_ss(_mm_shufd(det, 0xB1), det);
-
-			tmp = _mm_rcp_ss(det);
-			det = _mm_shufd(_mm_sub_ss(_mm_add_ss(tmp, tmp),
-							_mm_mul_ss(det, _mm_mul_ss(tmp, tmp))), 0x00);
-
-			return mat4(_mm_mul_ps(det, m1), _mm_mul_ps(det, m2),
-						_mm_mul_ps(det, m3), _mm_mul_ps(det, m4));
+			__m128 f1 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0xAA),
+									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xFF), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xAA), 0x80),
+											  _mm_shuffle_ps(m.m[2], m.m[1], 0xFF)));
+			__m128 f2 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x55),
+									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xFF), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x55), 0x80),
+											  _mm_shuffle_ps(m.m[2], m.m[1], 0xFF)));
+			__m128 f3 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x55),
+									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xAA), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x55), 0x80),
+											  _mm_shuffle_ps(m.m[2], m.m[1], 0xAA)));
+			__m128 f4 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x00),
+									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xFF), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x00), 0x80),
+											  _mm_shuffle_ps(m.m[2], m.m[1], 0xFF)));
+			__m128 f5 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x00),
+									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xAA), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x00), 0x80),
+											  _mm_shuffle_ps(m.m[2], m.m[1], 0xAA)));
+			__m128 f6 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x00),
+									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x55), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x00), 0x80),
+											  _mm_shuffle_ps(m.m[2], m.m[1], 0x55)));
+			__m128 v1 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0x00), 0xA8);
+			__m128 v2 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0x55), 0xA8);
+			__m128 v3 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0xAA), 0xA8);
+			__m128 v4 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0xFF), 0xA8);
+			__m128 s1 = _mm_set_ps(-0.0f,  0.0f, -0.0f,  0.0f);
+			__m128 s2 = _mm_set_ps( 0.0f, -0.0f,  0.0f, -0.0f);
+			__m128 i1 = _mm_xor_ps(s1, _mm_add_ps(
+									   _mm_sub_ps(_mm_mul_ps(v2, f1),
+												  _mm_mul_ps(v3, f2)),
+												  _mm_mul_ps(v4, f3)));
+			__m128 i2 = _mm_xor_ps(s2, _mm_add_ps(
+									   _mm_sub_ps(_mm_mul_ps(v1, f1),
+												  _mm_mul_ps(v3, f4)),
+												  _mm_mul_ps(v4, f5)));
+			__m128 i3 = _mm_xor_ps(s1, _mm_add_ps(
+									   _mm_sub_ps(_mm_mul_ps(v1, f2),
+												  _mm_mul_ps(v2, f4)),
+												  _mm_mul_ps(v4, f6)));
+			__m128 i4 = _mm_xor_ps(s2, _mm_add_ps(
+									   _mm_sub_ps(_mm_mul_ps(v1, f3),
+												  _mm_mul_ps(v2, f5)),
+												  _mm_mul_ps(v3, f6)));
+			__m128 d = _mm_mul_ps(m.m[0], _mm_movelh_ps(_mm_unpacklo_ps(i1, i2),
+													   _mm_unpacklo_ps(i3, i4)));
+			d = _mm_add_ps(d, _mm_shufd(d, 0x4E));
+			d = _mm_add_ps(d, _mm_shufd(d, 0x11));
+			d = _mm_div_ps(_mm_set1_ps(1.0f), d);
+			return mat4(vec4(_mm_mul_ps(i1, d)),
+						vec4(_mm_mul_ps(i2, d)),
+						vec4(_mm_mul_ps(i3, d)),
+						vec4(_mm_mul_ps(i4, d)));
 		}
 
 		// ----------------------------------------------------------------- //
