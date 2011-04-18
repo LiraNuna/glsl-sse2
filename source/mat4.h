@@ -324,34 +324,34 @@ class mat4
 		}
 
 		friend inline mat4 invert(const mat4 &m) {
-			__m128 f1 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0xAA),
-									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xFF), 0x80)),
-						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xAA), 0x80),
-											  _mm_shuffle_ps(m.m[2], m.m[1], 0xFF)));
-			__m128 f2 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x55),
-									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xFF), 0x80)),
-						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x55), 0x80),
-											  _mm_shuffle_ps(m.m[2], m.m[1], 0xFF)));
-			__m128 f3 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x55),
-									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xAA), 0x80)),
-						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x55), 0x80),
-											  _mm_shuffle_ps(m.m[2], m.m[1], 0xAA)));
-			__m128 f4 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x00),
-									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xFF), 0x80)),
-						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x00), 0x80),
-											  _mm_shuffle_ps(m.m[2], m.m[1], 0xFF)));
-			__m128 f5 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x00),
-									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0xAA), 0x80)),
-						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x00), 0x80),
-											  _mm_shuffle_ps(m.m[2], m.m[1], 0xAA)));
-			__m128 f6 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m[2], m.m[1], 0x00),
-									_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x55), 0x80)),
-						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m[3], m.m[2], 0x00), 0x80),
-											  _mm_shuffle_ps(m.m[2], m.m[1], 0x55)));
-			__m128 v1 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0x00), 0xA8);
-			__m128 v2 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0x55), 0xA8);
-			__m128 v3 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0xAA), 0xA8);
-			__m128 v4 = _mm_shufd(_mm_shuffle_ps(m.m[1], m.m[0], 0xFF), 0xA8);
+			__m128 f1 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m3, m.m2, 0xAA),
+									_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xFF), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xAA), 0x80),
+											  _mm_shuffle_ps(m.m3, m.m2, 0xFF)));
+			__m128 f2 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m3, m.m2, 0x55),
+									_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xFF), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0x55), 0x80),
+											  _mm_shuffle_ps(m.m3, m.m2, 0xFF)));
+			__m128 f3 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m3, m.m2, 0x55),
+									_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xAA), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0x55), 0x80),
+											  _mm_shuffle_ps(m.m3, m.m2, 0xAA)));
+			__m128 f4 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m3, m.m2, 0x00),
+									_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xFF), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0x00), 0x80),
+											  _mm_shuffle_ps(m.m3, m.m2, 0xFF)));
+			__m128 f5 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m3, m.m2, 0x00),
+									_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xAA), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0x00), 0x80),
+											  _mm_shuffle_ps(m.m3, m.m2, 0xAA)));
+			__m128 f6 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m3, m.m2, 0x00),
+									_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0x55), 0x80)),
+						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0x00), 0x80),
+											  _mm_shuffle_ps(m.m3, m.m2, 0x55)));
+			__m128 v1 = _mm_shufd(_mm_shuffle_ps(m.m2, m.m1, 0x00), 0xA8);
+			__m128 v2 = _mm_shufd(_mm_shuffle_ps(m.m2, m.m1, 0x55), 0xA8);
+			__m128 v3 = _mm_shufd(_mm_shuffle_ps(m.m2, m.m1, 0xAA), 0xA8);
+			__m128 v4 = _mm_shufd(_mm_shuffle_ps(m.m2, m.m1, 0xFF), 0xA8);
 			__m128 s1 = _mm_set_ps(-0.0f,  0.0f, -0.0f,  0.0f);
 			__m128 s2 = _mm_set_ps( 0.0f, -0.0f,  0.0f, -0.0f);
 			__m128 i1 = _mm_xor_ps(s1, _mm_add_ps(
@@ -370,8 +370,8 @@ class mat4
 									   _mm_sub_ps(_mm_mul_ps(v1, f3),
 												  _mm_mul_ps(v2, f5)),
 												  _mm_mul_ps(v3, f6)));
-			__m128 d = _mm_mul_ps(m.m[0], _mm_movelh_ps(_mm_unpacklo_ps(i1, i2),
-													    _mm_unpacklo_ps(i3, i4)));
+			__m128 d = _mm_mul_ps(m.m1, _mm_movelh_ps(_mm_unpacklo_ps(i1, i2),
+													  _mm_unpacklo_ps(i3, i4)));
 			d = _mm_add_ps(d, _mm_shufd(d, 0x4E));
 			d = _mm_add_ps(d, _mm_shufd(d, 0x11));
 			d = _mm_div_ps(_mm_set1_ps(1.0f), d);
