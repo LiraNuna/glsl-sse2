@@ -203,12 +203,12 @@ class dmat2
 
 		friend inline dmat2 invert(const dmat2 &m) {
 			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 1));
-			d = _mm_sub_pd(d, _mm_shuffle_pd(d, d, 1));
-			d = _mm_div_pd(_mm_set1_pd(1.0), _mm_shuffle_pd(d, d, 0));
+			d = _mm_sub_pd(d, _mm_shuffle_pd(d, d, 0x01));
+			d = _mm_div_pd(_mm_set1_pd(1.0), _mm_unpacklo_pd(d, d));
 			return dmat2(_mm_mul_pd(_mm_xor_pd(_mm_unpackhi_pd(m.m2, m.m1),
-									_mm_setr_pd( 0.0, -0.0)), d),
+									_mm_set_pd(-0.0,  0.0)), d),
 						 _mm_mul_pd(_mm_xor_pd(_mm_unpacklo_pd(m.m2, m.m1),
-									_mm_setr_pd(-0.0,  0.0)), d));
+									_mm_set_pd( 0.0, -0.0)), d));
 		}
 
 		// ----------------------------------------------------------------- //
