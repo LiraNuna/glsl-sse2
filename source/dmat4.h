@@ -481,11 +481,71 @@ class dmat4
 													   _mm_mul_sd(r2, r3)),
 											_mm_add_sd(_mm_unpackhi_pd(d, d), d)));
 		}
-/*
+
 		friend inline dmat4 invert(const dmat4 &m) {
-			// TODO
+			__m128d r1 = _mm_mul_pd(m.m11, _mm_shuffle_pd(m.m21, m.m21, 1));
+			__m128d r2 = _mm_mul_pd(m.m12, _mm_shuffle_pd(m.m22, m.m22, 1));
+			__m128d r3 = _mm_mul_pd(m.m31, _mm_shuffle_pd(m.m41, m.m41, 1));
+			__m128d r4 = _mm_mul_pd(m.m32, _mm_shuffle_pd(m.m42, m.m42, 1));
+			__m128d v11 = _mm_sub_pd(_mm_mul_pd(m.m12, _mm_shuffle_pd(m.m21, m.m21, 3)), _mm_mul_pd(m.m22, _mm_shuffle_pd(m.m11, m.m11, 3)));
+			__m128d v12 = _mm_sub_pd(_mm_mul_pd(m.m22, _mm_shuffle_pd(m.m11, m.m11, 0)), _mm_mul_pd(m.m12, _mm_shuffle_pd(m.m21, m.m21, 0)));
+			__m128d v21 = _mm_sub_pd(_mm_mul_pd(m.m31, _mm_shuffle_pd(m.m42, m.m42, 3)), _mm_mul_pd(m.m41, _mm_shuffle_pd(m.m32, m.m32, 3)));
+			__m128d v22 = _mm_sub_pd(_mm_mul_pd(m.m41, _mm_shuffle_pd(m.m32, m.m32, 0)), _mm_mul_pd(m.m31, _mm_shuffle_pd(m.m42, m.m42, 0)));
+			__m128d d = _mm_add_pd(_mm_mul_pd(v11, _mm_shuffle_pd(v21, v22, 0)),
+									_mm_mul_pd(v12, _mm_shuffle_pd(v21, v22, 3)));
+
+			r1 = _mm_sub_sd(r1, _mm_shuffle_pd(r1, r1, 3));
+			r2 = _mm_sub_sd(r2, _mm_shuffle_pd(r2, r2, 3));
+			r3 = _mm_sub_sd(r3, _mm_shuffle_pd(r3, r3, 3));
+			r4 = _mm_sub_sd(r4, _mm_shuffle_pd(r4, r4, 3));
+			d = _mm_add_sd(_mm_shuffle_pd(d, d,3), d);
+			d = _mm_div_sd(_mm_set_sd(1.0), _mm_sub_sd(_mm_add_sd(_mm_mul_sd(r1, r4),
+																   _mm_mul_sd(r2, r3)), d));
+			d = _mm_shuffle_pd(d, d, 0);
+			r1 = _mm_shuffle_pd(r1, r1, 0);
+			r2 = _mm_shuffle_pd(r2, r2, 0);
+			r3 = _mm_shuffle_pd(r3, r3, 0);
+			r4 = _mm_shuffle_pd(r4, r4, 0);
+			__m128d i11 = _mm_sub_pd(_mm_mul_pd(m.m11, r4), _mm_add_pd(
+									 _mm_mul_pd(v21, _mm_shuffle_pd(m.m12, m.m12, 0)),
+									 _mm_mul_pd(v22, _mm_shuffle_pd(m.m12, m.m12, 3))));
+			__m128d i12 = _mm_sub_pd(_mm_mul_pd(m.m21, r4), _mm_add_pd(
+									 _mm_mul_pd(v21, _mm_shuffle_pd(m.m22, m.m22, 0)),
+									 _mm_mul_pd(v22, _mm_shuffle_pd(m.m22, m.m22, 3))));
+			__m128d i41 = _mm_sub_pd(_mm_mul_pd(m.m32, r1), _mm_add_pd(
+									 _mm_mul_pd(v11, _mm_shuffle_pd(m.m31, m.m31, 0)),
+									 _mm_mul_pd(v12, _mm_shuffle_pd(m.m31, m.m31, 3))));
+			__m128d i42 = _mm_sub_pd(_mm_mul_pd(m.m42, r1), _mm_add_pd(
+									 _mm_mul_pd(v11, _mm_shuffle_pd(m.m41, m.m41, 0)),
+									 _mm_mul_pd(v12, _mm_shuffle_pd(m.m41, m.m41, 3))));
+			__m128d i21 = _mm_sub_pd(_mm_mul_pd(m.m31, r2), _mm_sub_pd(
+									 _mm_mul_pd(_mm_shuffle_pd(v12, v11, 1), m.m32),
+									 _mm_mul_pd(_mm_shuffle_pd(m.m32, m.m32, 1),
+												_mm_shuffle_pd(v12, v11, 2))));
+			__m128d i22 = _mm_sub_pd(_mm_mul_pd(m.m41, r2), _mm_sub_pd(
+									 _mm_mul_pd(_mm_shuffle_pd(v12, v11, 1), m.m42),
+									 _mm_mul_pd(_mm_shuffle_pd(m.m42, m.m42, 1),
+												_mm_shuffle_pd(v12, v11, 2))));
+			__m128d i31 = _mm_sub_pd(_mm_mul_pd(m.m12, r3), _mm_sub_pd(
+									 _mm_mul_pd(_mm_shuffle_pd(v22, v21, 1), m.m11),
+									 _mm_mul_pd(_mm_shuffle_pd(m.m11, m.m11, 1),
+												_mm_shuffle_pd(v22, v21, 2))));
+			__m128d i32 = _mm_sub_pd(_mm_mul_pd(m.m22, r3), _mm_sub_pd(
+									 _mm_mul_pd(_mm_shuffle_pd(v22, v21, 1), m.m21),
+									 _mm_mul_pd(_mm_shuffle_pd(m.m21, m.m21, 1),
+												_mm_shuffle_pd(v22, v21, 2))));
+			__m128d d1 = _mm_xor_pd(d, _mm_setr_pd( 0.0, -0.0));
+			__m128d d2 = _mm_xor_pd(d, _mm_setr_pd(-0.0,  0.0));
+			return dmat4(_mm_mul_pd(_mm_shuffle_pd(i12, i11, 3), d1),
+						 _mm_mul_pd(_mm_shuffle_pd(i22, i21, 3), d1),
+						 _mm_mul_pd(_mm_shuffle_pd(i12, i11, 0), d2),
+						 _mm_mul_pd(_mm_shuffle_pd(i22, i21, 0), d2),
+						 _mm_mul_pd(_mm_shuffle_pd(i32, i31, 3), d1),
+						 _mm_mul_pd(_mm_shuffle_pd(i42, i41, 3), d1),
+						 _mm_mul_pd(_mm_shuffle_pd(i32, i31, 0), d2),
+						 _mm_mul_pd(_mm_shuffle_pd(i42, i41, 0), d2));
 		}
-*/
+
 		// ----------------------------------------------------------------- //
 
 	private:
