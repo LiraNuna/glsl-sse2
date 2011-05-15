@@ -192,15 +192,23 @@ class dmat2
 		// ----------------------------------------------------------------- //
 
 		friend inline dmat2 transpose(const dmat2 &m) {
-			// TODO
+			return dmat2(_mm_unpackhi_pd(m.m1, m.m2),
+						 _mm_unpacklo_pd(m.m1, m.m2));
 		}
 
 		friend inline double determinant(const dmat2 &m) {
-			// TODO
+			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 1));
+			return _mm_cvtsd_f64(_mm_sub_pd(d, _mm_shuffle_pd(d, d, 1)));
 		}
 
 		friend inline dmat2 invert(const dmat2 &m) {
-			// TODO
+			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 1));
+			d = _mm_sub_pd(d, _mm_shuffle_pd(d, d, 1));
+			d = _mm_div_pd(_mm_set1_pd(1.0), _mm_shuffle_pd(d, d, 0));
+			return dmat2(_mm_mul_pd(_mm_xor_pd(_mm_unpackhi_pd(m.m2, m.m1),
+									_mm_setr_pd( 0.0, -0.0)), d),
+						 _mm_mul_pd(_mm_xor_pd(_mm_unpacklo_pd(m.m2, m.m1),
+									_mm_setr_pd(-0.0,  0.0)), d));
 		}
 
 		// ----------------------------------------------------------------- //
