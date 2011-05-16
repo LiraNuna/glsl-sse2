@@ -3,8 +3,6 @@
 #ifndef __MAT4_H__
 #define __MAT4_H__
 
-extern void printv(const vec4&);
-
 class mat4
 {
 	private:
