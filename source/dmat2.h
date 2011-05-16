@@ -109,7 +109,12 @@ class dmat2
 		}
 
 		inline dmat2& operator *= (const dmat2 &m) {
-			// TODO
+			m1 = _mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m1, m1), m.m1),
+							_mm_mul_pd(_mm_unpackhi_pd(m1, m1), m.m2));
+			m2 = _mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m2, m2), m.m1),
+							_mm_mul_pd(_mm_unpackhi_pd(m2, m2), m.m2));
+
+			return *this;
 		}
 
 		inline dmat2& operator /= (double d) {
@@ -157,16 +162,23 @@ class dmat2
 			return dmat2(_mm_mul_pd(m.m1, dd), _mm_mul_pd(m.m2, dd));
 		}
 
-		friend inline dvec4 operator * (const dmat2 &m, const dvec4 &v) {
-			// TODO
+		friend inline dvec2 operator * (const dmat2 &m, const dvec2 &v) {
+			return _mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(v.m, v.m), m.m1),
+							  _mm_mul_pd(_mm_unpackhi_pd(v.m, v.m), m.m2));
 		}
 
-		friend inline dvec4 operator * (const dvec4 &v, const dmat2 &m) {
-			// TODO
+		friend inline dvec2 operator * (const dvec2 &v, const dmat2 &m) {
+			return _mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(v.m, v.m),
+										 _mm_unpacklo_pd(m.m1, m.m2)),
+							  _mm_mul_pd(_mm_unpackhi_pd(v.m, v.m),
+										 _mm_unpackhi_pd(m.m1, m.m2)));
 		}
 
 		friend inline dmat2 operator * (const dmat2 &m0, const dmat2 &m1) {
-			// TODO
+			return dmat2(_mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m0.m1, m0.m1), m1.m1),
+									_mm_mul_pd(_mm_unpackhi_pd(m0.m1, m0.m1), m1.m2)),
+						 _mm_add_pd(_mm_mul_pd(_mm_unpacklo_pd(m0.m2, m0.m2), m1.m1),
+									_mm_mul_pd(_mm_unpackhi_pd(m0.m2, m0.m2), m1.m2)));
 		}
 
 		friend inline dmat2 operator / (const dmat2 &m, double d) {
@@ -197,12 +209,12 @@ class dmat2
 		}
 
 		friend inline double determinant(const dmat2 &m) {
-			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 1));
-			return _mm_cvtsd_f64(_mm_sub_pd(d, _mm_shuffle_pd(d, d, 1)));
+			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 0x01));
+			return _mm_cvtsd_f64(_mm_sub_pd(d, _mm_shuffle_pd(d, d, 0x01)));
 		}
 
 		friend inline dmat2 invert(const dmat2 &m) {
-			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 1));
+			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 0x01));
 			d = _mm_sub_pd(d, _mm_shuffle_pd(d, d, 0x01));
 			d = _mm_div_pd(_mm_set1_pd(1.0), _mm_unpacklo_pd(d, d));
 			return dmat2(_mm_mul_pd(_mm_xor_pd(_mm_unpackhi_pd(m.m2, m.m1),
