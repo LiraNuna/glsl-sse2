@@ -321,7 +321,7 @@ class mat4
 			return _mm_cvtss_f32(d);
 		}
 
-		friend inline mat4 invert(const mat4 &m) {
+		friend inline mat4 inverse(const mat4 &m) {
 			__m128 f1 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(m.m3, m.m2, 0xAA),
 									_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xFF), 0x80)),
 						 _mm_mul_ps(_mm_shufd(_mm_shuffle_ps(m.m4, m.m3, 0xAA), 0x80),

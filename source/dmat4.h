@@ -484,7 +484,7 @@ class dmat4
 											_mm_add_sd(_mm_unpackhi_pd(d, d), d)));
 		}
 
-		friend inline dmat4 invert(const dmat4 &m) {
+		friend inline dmat4 inverse(const dmat4 &m) {
 			__m128d r1 = _mm_mul_pd(m.m11, _mm_shuffle_pd(m.m21, m.m21, 0x01));
 			__m128d r2 = _mm_mul_pd(m.m12, _mm_shuffle_pd(m.m22, m.m22, 0x01));
 			__m128d r3 = _mm_mul_pd(m.m31, _mm_shuffle_pd(m.m41, m.m41, 0x01));

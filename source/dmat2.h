@@ -213,7 +213,7 @@ class dmat2
 			return _mm_cvtsd_f64(_mm_sub_pd(d, _mm_shuffle_pd(d, d, 0x01)));
 		}
 
-		friend inline dmat2 invert(const dmat2 &m) {
+		friend inline dmat2 inverse(const dmat2 &m) {
 			__m128d d = _mm_mul_pd(m.m1, _mm_shuffle_pd(m.m2, m.m2, 0x01));
 			d = _mm_sub_pd(d, _mm_shuffle_pd(d, d, 0x01));
 			d = _mm_div_pd(_mm_set1_pd(1.0), _mm_unpacklo_pd(d, d));
