@@ -367,11 +367,11 @@ class uvec4
 		}
 /*
 		friend inline uvec4& operator /= (uvec4 &v, uint32_t f) {
-			???
+			// TODO
 		}
 
 		friend inline uvec4& operator /= (iuvec4 &v0, const uvec4 &v1) {
-			???
+			// TODO
 		}
 */
 		// ----------------------------------------------------------------- //
@@ -424,15 +424,15 @@ class uvec4
 		}
 /*
 		friend inline const uvec4 operator / (uint32_t u, const uvec4 &v) {
-			???
+			// TODO
 		}
 
 		friend inline const uvec4 operator / (const uvec4 &v, uint32_t u) {
-			???
+			// TODO
 		}
 
 		friend inline const uvec4 operator / (const uvec4 &v0, const uvec4 &v1) {
-			???
+			// TODO
 		}
 */
 		// ----------------------------------------------------------------- //

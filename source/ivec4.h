@@ -366,11 +366,11 @@ class ivec4
 		}
 /*
 		friend inline ivec4& operator /= (ivec4 &v, int32_t f) {
-			???
+			// TODO
 		}
 
 		friend inline ivec4& operator /= (iivec4 &v0, const ivec4 &v1) {
-			???
+			// TODO
 		}
 */
 		// ----------------------------------------------------------------- //
@@ -427,15 +427,15 @@ class ivec4
 		}
 /*
 		friend inline const ivec4 operator / (int32_t f, const ivec4 &v) {
-			???
+			// TODO
 		}
 
 		friend inline const ivec4 operator / (const ivec4 &v, int32_t f) {
-			???
+			// TODO
 		}
 
 		friend inline const ivec4 operator / (const ivec4 &v0, const ivec4 &v1) {
-			???
+			// TODO
 		}
 */
 		// ----------------------------------------------------------------- //
