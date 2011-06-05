@@ -430,6 +430,43 @@ class vec4
 		}
 
 		// ----------------------------------------------------------------- //
+/*
+		friend inline const vec4 pow(const vec4 &v0, const vec4 &v1) {
+			// TODO
+		}
+
+		friend inline const vec4 exp(const vec4 &v) {
+			// TODO
+		}
+*/
+		friend inline const vec4 log(const vec4 &v) {
+			return log2(v) * 0.69314718055995f;
+		}
+/*
+		friend inline const vec4 exp2(const vec4 &v) {
+			// TODO
+		}
+*/
+		friend inline const vec4 log2(const vec4 &v) {
+			__m128i e = _mm_sub_epi32(_mm_srli_epi32(_mm_castps_si128(
+									  _mm_andnot_ps(_mm_set1_ps(-0.0f), v.m)), 23),
+												    _mm_set1_epi32(127));
+			__m128 y = _mm_sub_ps(_mm_castsi128_ps(_mm_sub_epi32(
+								  _mm_castps_si128(v.m), _mm_slli_epi32(e, 23))),
+														 _mm_set1_ps(1.0f));
+			__m128 x2 = _mm_mul_ps(y, y);
+			__m128 x4 = _mm_mul_ps(x2, x2);
+			__m128 hi = _mm_add_ps(_mm_mul_ps(y, _mm_set1_ps(-0.00931049621349f)),
+												 _mm_set1_ps( 0.05206469089414f));
+			__m128 lo = _mm_add_ps(_mm_mul_ps(y, _mm_set1_ps( 0.47868480909345f)),
+												 _mm_set1_ps(-0.72116591947498f));
+			hi = _mm_add_ps(_mm_mul_ps(y, hi),   _mm_set1_ps(-0.13753123777116f));
+			hi = _mm_add_ps(_mm_mul_ps(y, hi),   _mm_set1_ps( 0.24187369696082f));
+			hi = _mm_add_ps(_mm_mul_ps(y, hi),   _mm_set1_ps(-0.34730547155299f));
+			lo = _mm_add_ps(_mm_mul_ps(y, lo),   _mm_set1_ps(1.442689881667200f));
+			return _mm_add_ps(_mm_add_ps(_mm_mul_ps(x4, hi),
+										 _mm_mul_ps(y, lo)), _mm_cvtepi32_ps(e));
+		}
 
 		friend inline const vec4 sqrt(const vec4 &v) {
 			return _mm_sqrt_ps(v.m);
