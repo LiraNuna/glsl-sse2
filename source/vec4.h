@@ -442,11 +442,32 @@ class vec4
 		friend inline const vec4 log(const vec4 &v) {
 			return log2(v) * 0.69314718055995f;
 		}
-/*
+
 		friend inline const vec4 exp2(const vec4 &v) {
-			// TODO
+			__m128i ix = _mm_cvttps_epi32(_mm_add_ps(v.m, _mm_castsi128_ps(
+										  _mm_andnot_si128(_mm_srai_epi32(
+														   _mm_cvttps_epi32(v.m), 31),
+										  _mm_set1_epi32(0x3F7FFFFF)))));
+			__m128 f = _mm_mul_ps(_mm_sub_ps(_mm_cvtepi32_ps(ix), v.m),
+											 _mm_set1_ps(0.69314718055994530942f));
+			__m128 hi = _mm_add_ps(_mm_mul_ps(f, _mm_set1_ps(-0.0001413161f)),
+												 _mm_set1_ps(0.0013298820f));
+			__m128 lo = _mm_add_ps(_mm_mul_ps(f, _mm_set1_ps(-0.1666653019f)),
+												 _mm_set1_ps(0.4999999206f));
+			hi = _mm_add_ps(_mm_mul_ps(f, hi), _mm_set1_ps(-0.0083013598f));
+			hi = _mm_add_ps(_mm_mul_ps(f, hi), _mm_set1_ps( 0.0416573475f));
+			lo = _mm_add_ps(_mm_mul_ps(f, lo), _mm_set1_ps(-0.9999999995f));
+			lo = _mm_add_ps(_mm_mul_ps(f, lo), _mm_set1_ps(1.0f));
+			__m128 f2 = _mm_mul_ps(f, f);
+			return _mm_or_ps(_mm_mul_ps(_mm_add_ps(
+							 _mm_mul_ps(_mm_mul_ps(f2, f2), hi), lo),
+							 _mm_castsi128_ps(_mm_and_si128(_mm_slli_epi32((
+									 _mm_add_epi32(ix, _mm_set1_epi32(127))), 23),
+									 _mm_cmpgt_epi32(ix, _mm_set1_epi32(-128))))),
+							 _mm_castsi128_ps(_mm_srli_epi32(
+									 _mm_cmpgt_epi32(ix, _mm_set1_epi32( 128)), 1)));
 		}
-*/
+
 		friend inline const vec4 log2(const vec4 &v) {
 			__m128i e = _mm_sub_epi32(_mm_srli_epi32(_mm_castps_si128(
 									  _mm_andnot_ps(_mm_set1_ps(-0.0f), v.m)), 23),
