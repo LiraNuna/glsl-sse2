@@ -414,6 +414,59 @@ class dvec2
 		}
 
 		// ----------------------------------------------------------------- //
+/*
+		friend inline const dvec2 pow(const dvec2 &v0, const dvec2 &v1) {
+			// TODO
+		}
+
+		friend inline const dvec2 exp(const dvec2 &v) {
+			// TODO
+		}
+*/
+		friend inline const dvec2 log(const dvec2 &v) {
+			return log2(v) * 0.69314718055994530942;
+		}
+/*
+		friend inline const dvec2 exp2(const dvec2 &v) {
+			// TODO
+		}
+*/
+		friend inline const dvec2 log2(const dvec2 &v) {
+			__m128d o = _mm_set1_pd(1.0);
+			__m128d c = _mm_castsi128_pd(_mm_set1_epi64x(0x7FF0000000000000LL));
+			__m128d f = _mm_sub_pd(_mm_or_pd(_mm_andnot_pd(c, v.m),
+											 _mm_and_pd(c, o)), o);
+			__m128i a = _mm_sub_epi32(_mm_srli_epi32(_mm_castpd_si128(v.m), 20),
+									  _mm_set1_epi32(1023));
+			__m128d hi = _mm_add_pd(_mm_mul_pd(_mm_set1_pd( 3.61276447184348752E-05), f),
+									_mm_set1_pd(-4.16662127033480827E-04));
+			__m128d lo = _mm_add_pd(_mm_mul_pd(_mm_set1_pd(-1.43988260692073185E-01), f),
+									_mm_set1_pd( 1.60245637034704267E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd( 2.28193656337578229E-03));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd(-1.80329036970820794E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd(-7.93793829370930689E-03));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd( 2.06098446037376922E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd( 1.98461565426430164E-02));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd(-2.40449108727688962E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd(-3.84093543662501949E-02));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd( 2.88539004851839364E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd( 6.08335872067172597E-02));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd(-3.60673760117245982E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd(-8.27937055456904317E-02));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd( 4.80898346961226595E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd( 1.01392360727236079E-01));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd(-7.21347520444469934E-01));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd(-1.16530490533844182E-01));
+			lo = _mm_add_pd(_mm_mul_pd(f, lo), _mm_set1_pd( 0.44269504088896339E+00));
+			hi = _mm_add_pd(_mm_mul_pd(f, hi), _mm_set1_pd( 1.30009193360025350E-01));
+			__m128d x2  = _mm_mul_pd(f, f);
+			__m128d x10 = _mm_mul_pd(x2, x2);
+			x10 = _mm_mul_pd(x10, x10);
+			x10 = _mm_mul_pd(x2, x10);
+			return _mm_add_pd(_mm_add_pd(_mm_mul_pd(
+							  _mm_add_pd(_mm_mul_pd(x10, hi), lo), f), f),
+										 _mm_cvtepi32_pd(_mm_shuffle_epi32(a, 0x0D)));
+		}
 
 		friend inline const dvec2 sqrt(const dvec2 &v) {
 			return _mm_sqrt_pd(v.m);
