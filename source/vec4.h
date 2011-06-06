@@ -430,11 +430,11 @@ class vec4
 		}
 
 		// ----------------------------------------------------------------- //
-/*
-		friend inline const vec4 pow(const vec4 &v0, const vec4 &v1) {
-			// TODO
-		}
 
+		friend inline const vec4 pow(const vec4 &v0, const vec4 &v1) {
+			return exp2(log2(abs(v0)) * v1);
+		}
+/*
 		friend inline const vec4 exp(const vec4 &v) {
 			// TODO
 		}
