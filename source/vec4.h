@@ -504,8 +504,10 @@ class vec4
 		}
 
 		friend inline const vec4 ceil(const vec4 &v) {
-			return _mm_cvtepi32_ps(_mm_cvtps_epi32(
-								   _mm_add_ps(v.m, _mm_set1_ps(0.5f))));
+			__m128 m = _mm_cmpge_ps(v.m, _mm_set1_ps(8388608.0f));
+			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
+							 _mm_add_ps(v.m, _mm_set1_ps(0.5f))))),
+											 _mm_and_ps(m, v.m));
 		}
 
 		friend inline const vec4 clamp(const vec4 &v0, float f1, float f2) {
@@ -519,14 +521,18 @@ class vec4
 		}
 
 		friend inline const vec4 floor(const vec4 &v) {
-			return _mm_cvtepi32_ps(_mm_srai_epi32(_mm_cvtps_epi32(_mm_sub_ps(
-								   _mm_add_ps(v.m, v.m), _mm_set1_ps(0.5f))), 1));
+			__m128 m = _mm_cmpge_ps(v.m, _mm_set1_ps(8388608.0f));
+			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(_mm_srai_epi32(
+											  _mm_cvtps_epi32(_mm_sub_ps(
+							 _mm_add_ps(v.m, v.m), _mm_set1_ps(0.5f))), 1))),
+												   _mm_and_ps(m, v.m));
 		}
 
 		friend inline const vec4 fract(const vec4 &v) {
-			return _mm_sub_ps(v.m, _mm_cvtepi32_ps(_mm_srai_epi32(_mm_cvtps_epi32(
-								   _mm_sub_ps(_mm_add_ps(v.m, v.m),
-											  _mm_set1_ps(0.5f))), 1)));
+			return _mm_and_ps(_mm_cmple_ps(v.m, _mm_set1_ps(8388608.0f)),
+							  _mm_sub_ps(v.m, _mm_cvtepi32_ps(_mm_srai_epi32(
+											  _mm_cvtps_epi32(_mm_sub_ps(
+							  _mm_add_ps(v.m, v.m), _mm_set1_ps(0.5f))), 1))));
 		}
 
 		friend inline const vec4 max(const vec4 &v, float f) {
@@ -580,7 +586,9 @@ class vec4
 		}
 
 		friend inline const vec4 round(const vec4 &v) {
-			return _mm_cvtepi32_ps(_mm_cvtps_epi32(v.m));
+			__m128 m = _mm_cmpge_ps(v.m, _mm_set1_ps(8388608.0f));
+			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(
+							 _mm_cvtps_epi32(v.m))), _mm_and_ps(m, v.m));
 		}
 
 		friend inline const vec4 roundEven(const vec4 &v) {
@@ -625,7 +633,9 @@ class vec4
 		}
 
 		friend inline const vec4 trunc(const vec4 &v) {
-			return _mm_cvtepi32_ps(_mm_cvttps_epi32(v.m));
+			__m128 m = _mm_cmpge_ps(v.m, _mm_set1_ps(8388608.0f));
+			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(
+							 _mm_cvttps_epi32(v.m))), _mm_and_ps(m, v.m));
 		}
 
 		// ----------------------------------------------------------------- //
