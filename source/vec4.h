@@ -594,10 +594,9 @@ class vec4
 		}
 
 		friend inline const vec4 roundEven(const vec4 &v) {
-			__m128 f = _mm_cvtepi32_ps(_mm_cvttps_epi32(v.m));
-			return _mm_add_ps(_mm_or_ps(_mm_and_ps(_mm_set1_ps(-0.f), v.m),
-							  _mm_cvtepi32_ps(_mm_and_si128(_mm_cvtps_epi32(f),
-											  _mm_set1_epi32(1)))), f);
+			__m128 m = _mm_or_ps(_mm_and_ps(_mm_set1_ps(-0.0f), v.m),
+											_mm_set1_ps(8388608.0f));
+			return _mm_sub_ps(_mm_add_ps(v.m, m), m);
 		}
 
 		friend inline const vec4 sign(const vec4 &v) {
