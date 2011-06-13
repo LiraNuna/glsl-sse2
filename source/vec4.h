@@ -565,16 +565,22 @@ class vec4
 		friend inline const vec4 mod(const vec4 &v, float f) {
 			__m128 ff = _mm_set1_ps(f);
 			__m128 d = _mm_div_ps(v.m, ff);
-			return _mm_sub_ps(v.m, _mm_mul_ps(ff, _mm_cvtepi32_ps(_mm_srai_epi32(
-								   _mm_cvtps_epi32(_mm_sub_ps(_mm_add_ps(d, d),
-												   _mm_set1_ps(0.5f))), 1))));
+			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
+												  _mm_set1_ps(8388608.0f));
+			return _mm_sub_ps(v.m, _mm_mul_ps(ff, _mm_or_ps(_mm_andnot_ps(m,
+								   _mm_cvtepi32_ps(_mm_cvtps_epi32(
+								   _mm_sub_ps(d, _mm_set1_ps(0.5f))))),
+												 _mm_and_ps(m, d))));
 		}
 
 		friend inline const vec4 mod(const vec4 &v0, const vec4 &v1) {
 			__m128 d = _mm_div_ps(v0.m, v1.m);
-			return _mm_sub_ps(v0.m, _mm_mul_ps(v1.m, _mm_cvtepi32_ps(_mm_srai_epi32(
-									_mm_cvtps_epi32(_mm_sub_ps(_mm_add_ps(d, d),
-													_mm_set1_ps(0.5f))), 1))));
+			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v0.m),
+												  _mm_set1_ps(8388608.0f));
+			return _mm_sub_ps(v0.m, _mm_mul_ps(v1.m, _mm_or_ps(_mm_andnot_ps(m,
+									_mm_cvtepi32_ps(_mm_cvtps_epi32(
+									_mm_sub_ps(d, _mm_set1_ps(0.5f))))),
+												  _mm_and_ps(m, d))));
 		}
 
 		friend inline const vec4 modf(const vec4 &v0, vec4 &v1) {
