@@ -530,7 +530,8 @@ class vec4
 		}
 
 		friend inline const vec4 fract(const vec4 &v) {
-			return _mm_sub_ps(v.m, _mm_cvtepi32_ps(_mm_cvtps_epi32(_mm_sub_ps(v.m, _mm_set1_ps(0.5f)))));
+			return _mm_sub_ps(v.m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
+								   _mm_sub_ps(v.m, _mm_set1_ps(0.5f)))));
 		}
 
 		friend inline const vec4 max(const vec4 &v, float f) {
