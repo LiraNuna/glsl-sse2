@@ -504,8 +504,9 @@ class vec4
 		}
 
 		friend inline const vec4 ceil(const vec4 &v) {
-			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f));
+			__m128 m = _mm_cmpunord_ps(v.m,
+					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
+												  _mm_set1_ps(8388608.0f)));
 			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
 							 _mm_add_ps(v.m, _mm_set1_ps(0.5f))))),
 											 _mm_and_ps(m, v.m));
@@ -522,8 +523,9 @@ class vec4
 		}
 
 		friend inline const vec4 floor(const vec4 &v) {
-			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f));
+			__m128 m = _mm_cmpunord_ps(v.m,
+					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
+												  _mm_set1_ps(8388608.0f)));
 			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
 							 _mm_sub_ps(v.m, _mm_set1_ps(0.5f))))),
 											 _mm_and_ps(m, v.m));
@@ -566,8 +568,9 @@ class vec4
 		friend inline const vec4 mod(const vec4 &v, float f) {
 			__m128 ff = _mm_set1_ps(f);
 			__m128 d = _mm_div_ps(v.m, ff);
-			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f));
+			__m128 m = _mm_cmpunord_ps(d,
+					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), d),
+												  _mm_set1_ps(8388608.0f)));
 			return _mm_sub_ps(v.m, _mm_mul_ps(ff, _mm_or_ps(_mm_andnot_ps(m,
 								   _mm_cvtepi32_ps(_mm_cvtps_epi32(
 								   _mm_sub_ps(d, _mm_set1_ps(0.5f))))),
@@ -576,8 +579,9 @@ class vec4
 
 		friend inline const vec4 mod(const vec4 &v0, const vec4 &v1) {
 			__m128 d = _mm_div_ps(v0.m, v1.m);
-			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v0.m),
-												  _mm_set1_ps(8388608.0f));
+			__m128 m = _mm_cmpunord_ps(d,
+					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), d),
+												  _mm_set1_ps(8388608.0f)));
 			return _mm_sub_ps(v0.m, _mm_mul_ps(v1.m, _mm_or_ps(_mm_andnot_ps(m,
 									_mm_cvtepi32_ps(_mm_cvtps_epi32(
 									_mm_sub_ps(d, _mm_set1_ps(0.5f))))),
@@ -585,8 +589,9 @@ class vec4
 		}
 
 		friend inline const vec4 modf(const vec4 &v0, vec4 &v1) {
-			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v0.m),
-												  _mm_set1_ps(8388608.0f));
+			__m128 m = _mm_cmpunord_ps(v0.m,
+					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v0.m),
+												  _mm_set1_ps(8388608.0f)));
 			v1.m = _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
 							 _mm_sub_ps(v0.m, _mm_set1_ps(0.5f))))),
 											  _mm_and_ps(m, v0.m));
@@ -594,15 +599,16 @@ class vec4
 		}
 
 		friend inline const vec4 round(const vec4 &v) {
-			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f));
+			__m128 m = _mm_cmpunord_ps(v.m,
+					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
+												  _mm_set1_ps(8388608.0f)));
 			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(
 							 _mm_cvtps_epi32(v.m))), _mm_and_ps(m, v.m));
 		}
 
 		friend inline const vec4 roundEven(const vec4 &v) {
 			__m128 m = _mm_or_ps(_mm_and_ps(_mm_set1_ps(-0.0f), v.m),
-											_mm_set1_ps(8388608.0f));
+			                                _mm_set1_ps(8388608.0f));
 			return _mm_sub_ps(_mm_add_ps(v.m, m), m);
 		}
 
@@ -641,8 +647,9 @@ class vec4
 		}
 
 		friend inline const vec4 trunc(const vec4 &v) {
-			__m128 m = _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f));
+			__m128 m = _mm_cmpunord_ps(v.m,
+					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
+												  _mm_set1_ps(8388608.0f)));
 			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(
 							 _mm_cvttps_epi32(v.m))), _mm_and_ps(m, v.m));
 		}
