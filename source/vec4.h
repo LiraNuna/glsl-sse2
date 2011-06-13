@@ -451,9 +451,9 @@ class vec4
 			__m128 f = _mm_mul_ps(_mm_sub_ps(_mm_cvtepi32_ps(ix), v.m),
 											 _mm_set1_ps(0.69314718055994530942f));
 			__m128 hi = _mm_add_ps(_mm_mul_ps(f, _mm_set1_ps(-0.0001413161f)),
-												 _mm_set1_ps(0.0013298820f));
+												 _mm_set1_ps( 0.0013298820f));
 			__m128 lo = _mm_add_ps(_mm_mul_ps(f, _mm_set1_ps(-0.1666653019f)),
-												 _mm_set1_ps(0.4999999206f));
+												 _mm_set1_ps( 0.4999999206f));
 			hi = _mm_add_ps(_mm_mul_ps(f, hi), _mm_set1_ps(-0.0083013598f));
 			hi = _mm_add_ps(_mm_mul_ps(f, hi), _mm_set1_ps( 0.0416573475f));
 			lo = _mm_add_ps(_mm_mul_ps(f, lo), _mm_set1_ps(-0.9999999995f));
