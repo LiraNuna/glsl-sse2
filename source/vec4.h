@@ -504,12 +504,13 @@ class vec4
 		}
 
 		friend inline const vec4 ceil(const vec4 &v) {
-			__m128 m = _mm_cmpunord_ps(v.m,
-					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f)));
-			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
-							 _mm_add_ps(v.m, _mm_set1_ps(0.5f))))),
-											 _mm_and_ps(m, v.m));
+		    __m128 i = _mm_cvtepi32_ps(_mm_cvttps_epi32(v.m));
+		    __m128 m = _mm_cmple_ps(_mm_andnot_ps(_mm_set1_ps(-0.f), v.m),
+		    									  _mm_set1_ps(8388608.0f));
+		    return _mm_xor_ps(_mm_andnot_ps(m, v.m),
+		    				  _mm_and_ps(m, _mm_add_ps(i,
+		    				  _mm_and_ps(_mm_cmplt_ps(i, v.m),
+		    						  	 _mm_set1_ps(1.0f)))));
 		}
 
 		friend inline const vec4 clamp(const vec4 &v0, float f1, float f2) {
@@ -523,12 +524,13 @@ class vec4
 		}
 
 		friend inline const vec4 floor(const vec4 &v) {
-			__m128 m = _mm_cmpunord_ps(v.m,
-					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f)));
-			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
-							 _mm_sub_ps(v.m, _mm_set1_ps(0.5f))))),
-											 _mm_and_ps(m, v.m));
+		    __m128 i = _mm_cvtepi32_ps(_mm_cvttps_epi32(v.m));
+		    __m128 m = _mm_cmple_ps(_mm_andnot_ps(_mm_set1_ps(-0.f), v.m),
+		    									  _mm_set1_ps(8388608.0f));
+		    return _mm_xor_ps(_mm_andnot_ps(m, v.m),
+		    				  _mm_and_ps(m, _mm_sub_ps(i,
+		    				  _mm_and_ps(_mm_cmpgt_ps(i, v.m),
+		    						  	 _mm_set1_ps(1.0f)))));
 		}
 
 		friend inline const vec4 fract(const vec4 &v) {
