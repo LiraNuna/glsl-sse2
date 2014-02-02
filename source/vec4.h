@@ -603,11 +603,13 @@ class vec4
 		}
 
 		friend inline const vec4 round(const vec4 &v) {
-			__m128 m = _mm_cmpunord_ps(v.m,
-					   _mm_cmpge_ps(_mm_andnot_ps(_mm_set1_ps(-0.0f), v.m),
-												  _mm_set1_ps(8388608.0f)));
-			return _mm_or_ps(_mm_andnot_ps(m, _mm_cvtepi32_ps(
-							 _mm_cvtps_epi32(v.m))), _mm_and_ps(m, v.m));
+			__m128 z = _mm_set1_ps(-0.f);
+			__m128 s = _mm_and_ps(v.m, z);
+			__m128 m = _mm_cmple_ps(_mm_andnot_ps(z, v.m),
+									_mm_set1_ps(8388608.0f));
+			return _mm_or_ps(_mm_or_ps(_mm_andnot_ps(m, v.m), _mm_and_ps(
+							 _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_add_ps(v.m,
+							 _mm_or_ps(_mm_set1_ps(0.5f), s)))), m)), s);
 		}
 
 		friend inline const vec4 roundEven(const vec4 &v) {
