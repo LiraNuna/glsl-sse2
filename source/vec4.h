@@ -536,8 +536,13 @@ class vec4
 		}
 
 		friend inline const vec4 fract(const vec4 &v) {
-			return _mm_sub_ps(v.m, _mm_cvtepi32_ps(_mm_cvtps_epi32(
-								   _mm_sub_ps(v.m, _mm_set1_ps(0.5f)))));
+			__m128 z = _mm_set1_ps(-0.f);
+			__m128 m = _mm_cmple_ps(_mm_andnot_ps(z, v.m),
+									_mm_set1_ps(8388608.f));
+			return _mm_or_ps(_mm_and_ps(z, v.m), _mm_or_ps(_mm_andnot_ps(m,
+							 _mm_and_ps(_mm_cmpunord_ps(v.m, v.m), v.m)),
+							 _mm_and_ps(m, _mm_sub_ps(v.m, _mm_cvtepi32_ps(
+										   _mm_cvttps_epi32(v.m))))));
 		}
 
 		friend inline const vec4 max(const vec4 &v, float f) {
