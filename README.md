@@ -109,13 +109,13 @@ flat 100% speed increase when used correctly (such as ICC/GCC).
 ## TODO
  - Downswizzle `dvec4` => `dvec2` (Circular dependency issues) 
  - Refactor swizzling, it's a mess (`new_swizzle` branch only works on GCC 4.4)
- - Conversion functions between vectors (other than 
- - Missing classes: `dmat2`, `dmat2x4`, `dmat4x2`
+ - Conversion functions between vectors
+ - Missing classes: `dmat2x4`, `dmat4x2`
  - Better tests
  - Namespacing
  - Complete rewrite of `bvec4`
  	- swizzling of booleans
- 	- Automatic bvec4 generators for all vector classes 
+	- `bvec4` generators for all vector classes
  - Exponential functions for `vec4`, `dvec4`
  - Trigonometric functions for `vec4`, `dvec4`
  - Division for `ivec4`, `uvec4`
